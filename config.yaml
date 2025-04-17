@@ -1,0 +1,14 @@
+http:
+  port: 8080
+
+
+zap:
+  level: info
+  format: console
+  prefix: "my-ops-admin"
+  director: log
+  show-line: true
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
+  retention-day: -1
