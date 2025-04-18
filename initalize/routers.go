@@ -17,6 +17,8 @@ func Routers() *gin.Engine {
 		v1 := api.Group("/v1")
 		{
 			routers.InitAuthRoutes(v1)
+			routers.InitUserRoutes(v1)
+			routers.InitDepartmentRoutes(v1)
 		}
 	}
 	return opsRouter

@@ -12,5 +12,5 @@ var (
 	OPS_DB     *gorm.DB
 	OPS_CONFIG config.Server
 	OPS_VIPER  *viper.Viper
-	OPS_LOG    *zap.Logger
+	OPS_LOGGER *zap.Logger
 )

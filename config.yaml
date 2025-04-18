@@ -1,6 +1,17 @@
 http:
   port: 8080
 
+postgresql:
+  host: "192.168.50.37"
+  port: 5432
+  username: "mypg"
+  password: "Make@2025"
+  dbname: "mypg"
+  schema: "mypg"
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: ""
+  log-zap: false
 
 zap:
   level: debug

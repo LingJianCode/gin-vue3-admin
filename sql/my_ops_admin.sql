@@ -1,0 +1,1 @@
+INSERT INTO "sys_department" ("created_at","updated_at","deleted_at","name","code","parent_id","tree_path","sort","status") VALUES ('2025-04-18 18:02:14.586','2025-04-18 18:02:14.586',NULL,'公司','company',NULL,'',1,0)
