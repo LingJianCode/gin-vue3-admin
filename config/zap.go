@@ -30,11 +30,11 @@ func (c *Zap) Levels() zapcore.Level {
 
 func (c *Zap) ConsoleEncoder() zapcore.Encoder {
 	config := zapcore.EncoderConfig{
-		TimeKey:       "Time",
-		NameKey:       "Name",
-		LevelKey:      "Level",
-		CallerKey:     "Caller",
-		MessageKey:    "Message",
+		TimeKey:       "time",
+		NameKey:       "name",
+		LevelKey:      "level",
+		CallerKey:     "caller",
+		MessageKey:    "msg",
 		StacktraceKey: c.StacktraceKey,
 		LineEnding:    zapcore.DefaultLineEnding,
 		EncodeTime: func(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
@@ -53,11 +53,11 @@ func (c *Zap) ConsoleEncoder() zapcore.Encoder {
 
 func (c *Zap) FileEncoder() zapcore.Encoder {
 	config := zapcore.EncoderConfig{
-		TimeKey:       "Time",
-		NameKey:       "Name",
-		LevelKey:      "Level",
-		CallerKey:     "Caller",
-		MessageKey:    "Message",
+		TimeKey:       "time",
+		NameKey:       "name",
+		LevelKey:      "level",
+		CallerKey:     "caller",
+		MessageKey:    "msg",
 		StacktraceKey: c.StacktraceKey,
 		LineEnding:    zapcore.DefaultLineEnding,
 		EncodeTime: func(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
