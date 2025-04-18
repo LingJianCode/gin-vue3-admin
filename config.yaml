@@ -3,12 +3,13 @@ http:
 
 
 zap:
-  level: info
+  level: debug
   format: console
   prefix: "my-ops-admin"
-  director: log
+  director: logs
   show-line: true
-  encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true
   retention-day: -1
+  log-in-file: false
+  log-file-name: "app.log"
