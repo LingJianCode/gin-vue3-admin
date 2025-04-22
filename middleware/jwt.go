@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"my-ops-admin/utils"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,11 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 		}
 		claims, err := utils.ParseTokenHs256(token)
 		if err != nil {
+			if errors.Is(err, utils.ErrorTokenExpired) {
+				utils.NoAuth("授权已过期", c)
+				c.Abort()
+				return
+			}
 			utils.NoAuth(err.Error(), c)
 			c.Abort()
 			return

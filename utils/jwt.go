@@ -11,6 +11,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var (
+	ErrorTokenValid            = errors.New("未知错误")
+	ErrorTokenExpired          = errors.New("token已过期")
+	ErrorTokenNotValidYet      = errors.New("token尚未激活")
+	ErrorTokenMalformed        = errors.New("这不是一个token")
+	ErrorTokenSignatureInvalid = errors.New("无效签名")
+	ErrorTokenInvalid          = errors.New("无法处理此token")
+)
+
 type MyCustomClaims struct {
 	UserID   uint
 	Username string
@@ -56,19 +65,25 @@ func ParseTokenHs256(token_string string) (*MyCustomClaims, error) {
 		return []byte(sign_key), nil //返回签名密钥
 	})
 	if err != nil {
-		return nil, err
+		switch {
+		case errors.Is(err, jwt.ErrTokenExpired):
+			return nil, ErrorTokenExpired
+		case errors.Is(err, jwt.ErrTokenMalformed):
+			return nil, ErrorTokenMalformed
+		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
+			return nil, ErrorTokenSignatureInvalid
+		case errors.Is(err, jwt.ErrTokenNotValidYet):
+			return nil, ErrorTokenNotValidYet
+		default:
+			return nil, ErrorTokenInvalid
+		}
 	}
-
-	if !token.Valid {
-		return nil, errors.New("claim invalid")
+	if token != nil {
+		if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
+			return claims, nil
+		}
 	}
-
-	claims, ok := token.Claims.(*MyCustomClaims)
-	if !ok {
-		return nil, errors.New("invalid claim type")
-	}
-
-	return claims, nil
+	return nil, ErrorTokenValid
 }
 
 // 从请求头中获取token
