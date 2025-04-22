@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	ErrorTokenValid            = errors.New("未知错误")
-	ErrorTokenExpired          = errors.New("token已过期")
-	ErrorTokenNotValidYet      = errors.New("token尚未激活")
-	ErrorTokenMalformed        = errors.New("这不是一个token")
-	ErrorTokenSignatureInvalid = errors.New("无效签名")
-	ErrorTokenInvalid          = errors.New("无法处理此token")
+	ErrTokenValid            = errors.New("未知错误")
+	ErrTokenExpired          = errors.New("token已过期")
+	ErrTokenNotValidYet      = errors.New("token尚未激活")
+	ErrTokenMalformed        = errors.New("这不是一个token")
+	ErrTokenSignatureInvalid = errors.New("无效签名")
+	ErrTokenInvalid          = errors.New("无法处理此token")
 )
 
 type MyCustomClaims struct {
@@ -67,15 +67,15 @@ func ParseTokenHs256(token_string string) (*MyCustomClaims, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, jwt.ErrTokenExpired):
-			return nil, ErrorTokenExpired
+			return nil, ErrTokenExpired
 		case errors.Is(err, jwt.ErrTokenMalformed):
-			return nil, ErrorTokenMalformed
+			return nil, ErrTokenMalformed
 		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
-			return nil, ErrorTokenSignatureInvalid
+			return nil, ErrTokenSignatureInvalid
 		case errors.Is(err, jwt.ErrTokenNotValidYet):
-			return nil, ErrorTokenNotValidYet
+			return nil, ErrTokenNotValidYet
 		default:
-			return nil, ErrorTokenInvalid
+			return nil, ErrTokenInvalid
 		}
 	}
 	if token != nil {
@@ -83,7 +83,7 @@ func ParseTokenHs256(token_string string) (*MyCustomClaims, error) {
 			return claims, nil
 		}
 	}
-	return nil, ErrorTokenValid
+	return nil, ErrTokenValid
 }
 
 // 从请求头中获取token

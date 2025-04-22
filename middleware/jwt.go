@@ -17,7 +17,7 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 		}
 		claims, err := utils.ParseTokenHs256(token)
 		if err != nil {
-			if errors.Is(err, utils.ErrorTokenExpired) {
+			if errors.Is(err, utils.ErrTokenExpired) {
 				utils.NoAuth("授权已过期", c)
 				c.Abort()
 				return
