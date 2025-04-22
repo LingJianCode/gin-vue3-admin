@@ -2,8 +2,10 @@ package v1
 
 import (
 	"my-ops-admin/global"
+	"my-ops-admin/models"
 	"my-ops-admin/request"
 	"my-ops-admin/response"
+	"my-ops-admin/service"
 	"my-ops-admin/utils"
 
 	"github.com/gin-gonic/gin"
@@ -35,4 +37,34 @@ func Login(c *gin.Context) {
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
+	if l.CaptchaKey != "" && l.CaptchaCode != "" && store.Verify(l.CaptchaKey, l.CaptchaCode, true) {
+		u := &models.SysUser{Username: l.Username, Password: l.Password}
+		user, err := service.Login(u)
+		if err != nil {
+			global.OPS_LOGGER.Error("用户名不存在或者密码错误!", zap.Error(err))
+			utils.FailWithMessage("用户名不存在或者密码错误", c)
+			return
+		}
+		TokenNext(c, *user)
+		return
+	}
+	utils.FailWithMessage("验证码错误", c)
+}
+
+func TokenNext(c *gin.Context, user models.SysUser) {
+	token, claims, err := utils.GenerateTokenUsingHs256(&user)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取token失败!", zap.Error(err))
+		utils.FailWithMessage("获取token失败", c)
+		return
+	}
+	utils.OkWithDetailed(response.LoginResponse{
+		User:      user,
+		Token:     token,
+		ExpiresAt: claims.RegisteredClaims.ExpiresAt.Unix() * 1000,
+	}, "登录成功", c)
+}
+
+func Logout(c *gin.Context) {
+	utils.Ok(c)
 }

@@ -10,5 +10,6 @@ func InitUserRoutes(router *gin.RouterGroup) {
 	userRouter := router.Group("/users")
 	{
 		userRouter.POST("", v1.CreateUser)
+		userRouter.GET("/me", v1.GetUserInfo)
 	}
 }

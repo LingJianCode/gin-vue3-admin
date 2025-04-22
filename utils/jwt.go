@@ -1,0 +1,90 @@
+package utils
+
+import (
+	"errors"
+	"math/rand"
+	"my-ops-admin/models"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+type MyCustomClaims struct {
+	UserID   uint
+	Username string
+	Nickname string
+	jwt.RegisteredClaims
+}
+
+// 签名密钥
+const sign_key = "A3HbPp8vwz"
+
+// 随机字符串
+var letters = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randStr(str_len int) string {
+	rand_bytes := make([]rune, str_len)
+	for i := range rand_bytes {
+		rand_bytes[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(rand_bytes)
+}
+
+func GenerateTokenUsingHs256(user *models.SysUser) (token string, claims MyCustomClaims, err error) {
+	claims = MyCustomClaims{
+		UserID:   user.ID,
+		Username: user.Username,
+		Nickname: user.Nickname,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "MY_OPS_ADMIN",                                  // 签发者
+			Subject:   user.Username,                                   // 签发对象
+			Audience:  jwt.ClaimStrings{"webbrowser"},                  // 签发受众
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),   // 过期时间
+			NotBefore: jwt.NewNumericDate(time.Now().Add(time.Second)), // 最早使用时间
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                  // 签发时间
+			ID:        randStr(10),                                     // wt ID, 类似于盐值
+		},
+	}
+	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(sign_key))
+	return
+}
+
+func ParseTokenHs256(token_string string) (*MyCustomClaims, error) {
+	token, err := jwt.ParseWithClaims(token_string, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(sign_key), nil //返回签名密钥
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("claim invalid")
+	}
+
+	claims, ok := token.Claims.(*MyCustomClaims)
+	if !ok {
+		return nil, errors.New("invalid claim type")
+	}
+
+	return claims, nil
+}
+
+// 从请求头中获取token
+func ExtractToken(c *gin.Context) string {
+	bearerToken := c.GetHeader("Authorization")
+	if len(strings.Split(bearerToken, " ")) == 2 {
+		return strings.Split(bearerToken, " ")[1]
+	}
+	return ""
+}
+
+func GetUserID(c *gin.Context) (uint, error) {
+	if claims, exists := c.Get("claims"); !exists {
+		return 0, errors.New("从上下文获取用户信息失败")
+	} else {
+		waitUse := claims.(*MyCustomClaims)
+		return waitUse.UserID, nil
+	}
+}

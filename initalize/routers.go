@@ -1,6 +1,7 @@
 package initalize
 
 import (
+	"my-ops-admin/middleware"
 	"my-ops-admin/routers"
 
 	"github.com/gin-gonic/gin"
@@ -14,11 +15,13 @@ func Routers() *gin.Engine {
 	}
 	api := opsRouter.Group("/api")
 	{
-		v1 := api.Group("/v1")
+		public := api.Group("/v1")
+		private := api.Group("/v1")
+		private.Use(middleware.JwtAuthMiddleware())
 		{
-			routers.InitAuthRoutes(v1)
-			routers.InitUserRoutes(v1)
-			routers.InitDepartmentRoutes(v1)
+			routers.InitAuthRoutes(public, private)
+			routers.InitUserRoutes(private)
+			routers.InitDepartmentRoutes(private)
 		}
 	}
 	return opsRouter

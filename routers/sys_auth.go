@@ -6,9 +6,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitAuthRoutes(router *gin.RouterGroup) {
-	authRouter := router.Group("/auth")
+func InitAuthRoutes(public *gin.RouterGroup, private *gin.RouterGroup) {
+	publicAuthRouter := public.Group("/auth")
 	{
-		authRouter.GET("/captcha", v1.Captcha)
+		publicAuthRouter.GET("/captcha", v1.Captcha)
+		publicAuthRouter.POST("/login", v1.Login)
+	}
+	privateAuthRouter := private.Group("/auth")
+	{
+		privateAuthRouter.DELETE("/logout", v1.Logout)
 	}
 }

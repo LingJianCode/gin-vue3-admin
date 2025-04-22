@@ -41,3 +41,19 @@ func CreateUser(c *gin.Context) {
 	}
 	utils.OkWithMessage("注册成功", c)
 }
+
+func GetUserInfo(c *gin.Context) {
+	id, err := utils.GetUserID(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	ReqUser, err := service.GetUserInfoByID(id)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.OkWithDetailed(gin.H{"user": ReqUser}, "获取成功", c)
+}

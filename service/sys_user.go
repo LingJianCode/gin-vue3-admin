@@ -17,3 +17,10 @@ func CreateUser(u models.SysUser) error {
 	u.Password = utils.BcryptHash(u.Password)
 	return global.OPS_DB.Create(&u).Error
 }
+
+func GetUserInfoByID(id uint) (models.SysUser, error) {
+	var user models.SysUser
+	err := global.OPS_DB.First(&user, id).Error
+	user.Password = ""
+	return user, err
+}
