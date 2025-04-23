@@ -37,7 +37,7 @@ func Login(c *gin.Context) {
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
-	if l.CaptchaKey != "" && l.CaptchaCode != "" && store.Verify(l.CaptchaKey, l.CaptchaCode, true) {
+	if gin.Mode() == gin.DebugMode || l.CaptchaKey != "" && l.CaptchaCode != "" && store.Verify(l.CaptchaKey, l.CaptchaCode, true) {
 		u := &models.SysUser{Username: l.Username, Password: l.Password}
 		user, err := service.Login(u)
 		if err != nil {
@@ -59,9 +59,9 @@ func TokenNext(c *gin.Context, user models.SysUser) {
 		return
 	}
 	utils.OkWithDetailed(response.LoginResponse{
-		User:      user,
-		Token:     token,
-		ExpiresAt: claims.RegisteredClaims.ExpiresAt.Unix() * 1000,
+		TokenType:   "Bearer",
+		AccessToken: token,
+		ExpiresIn:   claims.RegisteredClaims.ExpiresAt.Unix() * 1000,
 	}, "登录成功", c)
 }
 

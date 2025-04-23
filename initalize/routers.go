@@ -10,6 +10,7 @@ import (
 func Routers() *gin.Engine {
 	opsRouter := gin.New()
 	opsRouter.Use(gin.Recovery())
+	// gin默认是Debug模式
 	if gin.Mode() == gin.DebugMode {
 		opsRouter.Use(gin.Logger())
 	}

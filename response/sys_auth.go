@@ -1,14 +1,13 @@
 package response
 
-import "my-ops-admin/models"
-
 type Captcha struct {
 	CaptchaKey    string `json:"captchaKey"`
 	CaptchaBase64 string `json:"captchaBase64"`
 }
 
 type LoginResponse struct {
-	User      models.SysUser `json:"user"`
-	Token     string         `json:"token"`
-	ExpiresAt int64          `json:"expiresAt"`
+	TokenType    string `json:"tokenType"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    int64  `json:"expiresIn"`
 }
