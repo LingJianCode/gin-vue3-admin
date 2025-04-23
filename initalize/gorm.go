@@ -13,6 +13,12 @@ import (
 )
 
 func InitDB() {
+	/*
+		注意 AutoMigrate 会自动创建数据库外键约束，您可以在初始化时禁用此功能，例如：
+		db, err := gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+		})
+	*/
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  global.OPS_CONFIG.PostgreSQL.Dsn(),
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
@@ -30,6 +36,8 @@ func AutoMigrate() {
 	err := db.AutoMigrate(
 		models.SysUser{},
 		models.SysDepartment{},
+		models.SysMenu{},
+		models.SysMenuParameter{},
 	)
 	if err != nil {
 		global.OPS_LOGGER.Error("AutoMigrate table failed", zap.Error(err))
