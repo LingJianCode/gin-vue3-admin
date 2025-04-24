@@ -10,7 +10,7 @@ type SysMenu struct {
 	Component  string `gorm:"comment:组件路径(vue页面完整路径，省略.vue后缀)" json:"component,omitempty"`
 	Icon       string `gorm:"comment:菜单图标" json:"icon,omitempty"`
 	KeepAlive  int64  `gorm:"comment:【菜单】是否开启页面缓存" json:"keepAlive,omitempty"`
-	Name       string `gorm:"comment:菜单名称" json:"name,omitempty"`
+	Name       string `gorm:"uniqueIndex;comment:菜单名称" json:"name,omitempty"`
 	ParentID   uint   `gorm:"comment:父菜单ID" json:"parentId,omitempty"`
 	Perm       string `gorm:"comment:权限标识" json:"perm,omitempty"`
 	Redirect   string `gorm:"comment:跳转路径" json:"redirect,omitempty"`

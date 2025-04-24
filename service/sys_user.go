@@ -21,6 +21,5 @@ func CreateUser(u models.SysUser) error {
 func GetUserInfoByID(id uint) (models.SysUser, error) {
 	var user models.SysUser
 	err := global.OPS_DB.First(&user, id).Error
-	user.Password = ""
 	return user, err
 }
