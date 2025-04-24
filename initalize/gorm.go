@@ -34,6 +34,9 @@ func InitDB() {
 func AutoMigrate() {
 	db := global.OPS_DB
 	err := db.AutoMigrate(
+
+		models.SysUserRole{},
+		models.SysRole{},
 		models.SysUser{},
 		models.SysDept{},
 		models.SysMenu{},

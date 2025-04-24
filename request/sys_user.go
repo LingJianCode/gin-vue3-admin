@@ -4,7 +4,7 @@ type CreateUser struct {
 	// 用户头像
 	Avatar string `json:"avatar,omitempty"`
 	// 部门ID
-	DeptID int `json:"deptId,omitempty"`
+	DeptID uint `json:"deptId,omitempty"`
 	// 邮箱
 	Email string `json:"email,omitempty"`
 	// 性别
