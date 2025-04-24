@@ -35,7 +35,7 @@ func AutoMigrate() {
 	db := global.OPS_DB
 	err := db.AutoMigrate(
 		models.SysUser{},
-		models.SysDepartment{},
+		models.SysDept{},
 		models.SysMenu{},
 		models.SysMenuParameter{},
 	)

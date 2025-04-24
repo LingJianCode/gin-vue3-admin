@@ -11,25 +11,36 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateDepartment(c *gin.Context) {
-	var cd request.CreateDepartment
+func CreateDept(c *gin.Context) {
+	var cd request.CreateDept
 	err := c.ShouldBindJSON(&cd)
 	if err != nil {
 		global.OPS_LOGGER.Error("创建部门参数异常", zap.Error(err))
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
-	d := &models.SysDepartment{
+	d := &models.SysDept{
 		Name:     cd.Name,
 		Code:     cd.Code,
-		ParentId: cd.ParentID,
+		ParentID: cd.ParentID,
 		Sort:     cd.Sort,
 	}
-	err = service.CreateDepartment(*d)
+	err = service.CreateDept(*d)
 	if err != nil {
 		global.OPS_LOGGER.Error("创建部门异常", zap.Error(err))
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
 	utils.OkWithMessage("创建部门成功", c)
+}
+
+func GetDeptTree(c *gin.Context) {
+	dept, err := service.GetDeptTree()
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+
+	utils.OkWithDetailed(dept, "获取成功", c)
 }

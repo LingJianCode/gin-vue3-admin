@@ -47,13 +47,13 @@ func GenerateTokenUsingHs256(user *models.SysUser) (token string, claims MyCusto
 		Username: user.Username,
 		Nickname: user.Nickname,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "MY_OPS_ADMIN",                                  // 签发者
-			Subject:   user.Username,                                   // 签发对象
-			Audience:  jwt.ClaimStrings{"webbrowser"},                  // 签发受众
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),   // 过期时间
-			NotBefore: jwt.NewNumericDate(time.Now().Add(time.Second)), // 最早使用时间
-			IssuedAt:  jwt.NewNumericDate(time.Now()),                  // 签发时间
-			ID:        randStr(10),                                     // wt ID, 类似于盐值
+			Issuer:    "MY_OPS_ADMIN",                                        // 签发者
+			Subject:   user.Username,                                         // 签发对象
+			Audience:  jwt.ClaimStrings{"webbrowser"},                        // 签发受众
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),         // 过期时间
+			NotBefore: jwt.NewNumericDate(time.Now().Add(-10 * time.Second)), // 最早使用时间
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                        // 签发时间
+			ID:        randStr(10),                                           // wt ID, 类似于盐值
 		},
 	}
 	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(sign_key))

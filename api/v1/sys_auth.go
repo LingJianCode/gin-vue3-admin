@@ -31,7 +31,7 @@ func Captcha(c *gin.Context) {
 
 func Login(c *gin.Context) {
 	var l request.Login
-	err := c.ShouldBindJSON(&l)
+	err := c.ShouldBind(&l)
 	if err != nil {
 		global.OPS_LOGGER.Error("登录参数异常", zap.Error(err))
 		utils.FailWithMessage(err.Error(), c)

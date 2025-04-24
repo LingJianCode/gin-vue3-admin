@@ -5,7 +5,6 @@ import (
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/response"
-	"my-ops-admin/utils"
 	"reflect"
 
 	"gorm.io/gorm"
@@ -57,6 +56,11 @@ func GetMenuRouteTree() (menus []*response.MenuRouteRes, err error) {
 	return menu, nil
 }
 
+// buildMenuRoute
+//
+//	@param []*models.SysMenu
+//	@param uint
+//	@return []*response.MenuRouteRes
 func buildMenuRoute(menuList []*models.SysMenu, parentId uint) []*response.MenuRouteRes {
 	res := make([]*response.MenuRouteRes, 0)
 	for _, v := range menuList {
@@ -67,10 +71,10 @@ func buildMenuRoute(menuList []*models.SysMenu, parentId uint) []*response.MenuR
 				Path:      v.RoutePath,
 				Redirect:  v.Redirect,
 				Meta: response.Meta{
-					AlwaysShow: utils.Int64ToBool(v.AlwaysShow),
-					Hidden:     utils.Int64ToBool(v.Visible),
+					AlwaysShow: v.AlwaysShow == 1,
+					Hidden:     v.Visible == 0,
 					Icon:       v.Icon,
-					KeepAlive:  utils.Int64ToBool(v.KeepAlive),
+					KeepAlive:  v.KeepAlive == 1,
 					Title:      v.Name,
 					Params:     v.Params,
 				},

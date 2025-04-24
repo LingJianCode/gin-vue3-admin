@@ -22,7 +22,7 @@ func Routers() *gin.Engine {
 		{
 			routers.InitAuthRoutes(public, private)
 			routers.InitUserRoutes(private)
-			routers.InitDepartmentRoutes(private)
+			routers.InitDeptRoutes(private)
 			routers.InitMenuRoutes(private)
 		}
 	}
