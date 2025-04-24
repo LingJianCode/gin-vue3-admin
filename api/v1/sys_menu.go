@@ -4,7 +4,6 @@ import (
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/request"
-	"my-ops-admin/response"
 	"my-ops-admin/service"
 	"my-ops-admin/utils"
 
@@ -13,14 +12,11 @@ import (
 )
 
 func GetMenusList(c *gin.Context) {
-	menus, err := service.GetMenusList()
+	menus, err := service.GetMenuTree()
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
-	}
-	if menus == nil {
-		menus = []response.GetMenuRes{}
 	}
 	utils.OkWithDetailed(menus, "获取成功", c)
 }
@@ -54,4 +50,15 @@ func CreateMenu(c *gin.Context) {
 		return
 	}
 	utils.OkWithMessage("添加成功", c)
+}
+
+func GetMenuRoutes(c *gin.Context) {
+	menus, err := service.GetMenuRouteTree()
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+
+	utils.OkWithDetailed(menus, "获取成功", c)
 }

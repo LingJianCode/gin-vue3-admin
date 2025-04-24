@@ -5,6 +5,8 @@ import (
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/response"
+	"my-ops-admin/utils"
+	"reflect"
 
 	"gorm.io/gorm"
 )
@@ -16,48 +18,66 @@ func CreateMenu(menu models.SysMenu) error {
 	return global.OPS_DB.Create(&menu).Error
 }
 
-func GetMenusList() (menus []response.GetMenuRes, err error) {
-	treeMap, err := getMenuTreeMap()
-	if err != nil {
-		return nil, err
-	}
-	menus = treeMap[0]
-	for i := 0; i < len(menus); i++ {
-		err = getChildrenList(&menus[i], treeMap)
-	}
-	return menus, err
-}
-
-func getMenuTreeMap() (treeMap map[uint][]response.GetMenuRes, err error) {
-	var allMenus []models.SysMenu
-	treeMap = make(map[uint][]response.GetMenuRes)
-	err = global.OPS_DB.Order("sort").Preload("Params").Find(&allMenus).Error
+func GetMenuTree() (menus []*response.MenuTreeRes, err error) {
+	var treeMenu []*response.MenuTreeRes
+	err = global.OPS_DB.Model(&models.SysMenu{}).Order("sort").Preload("Params").Find(&treeMenu).Error
 	if err != nil {
 		return
 	}
-	for _, v := range allMenus {
-		treeMap[v.ParentID] = append(treeMap[v.ParentID], response.GetMenuRes{
-			Component: v.Component,
-			Icon:      v.Icon,
-			ID:        v.ID,
-			Name:      v.Name,
-			ParentID:  v.ParentID,
-			Perm:      v.Perm,
-			Redirect:  v.Redirect,
-			RouteName: v.RouteName,
-			RoutePath: v.RoutePath,
-			Sort:      v.Sort,
-			Type:      v.Type,
-			Visible:   v.Visible,
-		})
-	}
-	return treeMap, err
+	menu := getChildrenList(treeMenu, 0)
+	return menu, nil
 }
 
-func getChildrenList(menu *response.GetMenuRes, treeMap map[uint][]response.GetMenuRes) (err error) {
-	menu.Children = treeMap[menu.ID]
-	for i := 0; i < len(menu.Children); i++ {
-		err = getChildrenList(&menu.Children[i], treeMap)
+func getChildrenList(menus []*response.MenuTreeRes, parentId uint) []*response.MenuTreeRes {
+	// 定义子节点目录
+	var nodes []*response.MenuTreeRes
+	// 判断反射值的有效性
+	if reflect.ValueOf(menus).IsValid() {
+		// 循环所有菜单
+		for _, v := range menus {
+			// 操作指定级别菜单 parentId为0是表示一级
+			if v.ParentID == parentId {
+				// 将子级菜单 不定长压入 children数组
+				v.Children = append(v.Children, getChildrenList(menus, v.ID)...)
+				// 放入结果数组
+				nodes = append(nodes, v)
+			}
+		}
 	}
-	return err
+	return nodes
+}
+
+func GetMenuRouteTree() (menus []*response.MenuRouteRes, err error) {
+	var menuList []*models.SysMenu
+	err = global.OPS_DB.Where("type != ?", 4).Order("sort").Preload("Params").Find(&menuList).Error
+	if err != nil {
+		return
+	}
+	menu := buildMenuRoute(menuList, 0)
+	return menu, nil
+}
+
+func buildMenuRoute(menuList []*models.SysMenu, parentId uint) []*response.MenuRouteRes {
+	res := make([]*response.MenuRouteRes, 0)
+	for _, v := range menuList {
+		if v.ParentID == parentId {
+			menuRoute := response.MenuRouteRes{
+				Component: v.Component,
+				Name:      v.RoutePath,
+				Path:      v.RoutePath,
+				Redirect:  v.Redirect,
+				Meta: response.Meta{
+					AlwaysShow: utils.Int64ToBool(v.AlwaysShow),
+					Hidden:     utils.Int64ToBool(v.Visible),
+					Icon:       v.Icon,
+					KeepAlive:  utils.Int64ToBool(v.KeepAlive),
+					Title:      v.Name,
+					Params:     v.Params,
+				},
+			}
+			menuRoute.Children = buildMenuRoute(menuList, v.ID)
+			res = append(res, &menuRoute)
+		}
+	}
+	return res
 }

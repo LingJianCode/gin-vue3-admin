@@ -7,7 +7,7 @@ type SysUser struct {
 	Username string         `gorm:"index;comment:用户登录名"`
 	Nickname string         `gorm:"default:系统用户;comment:用户昵称"`
 	Gender   int8           `gorm:"comment:性别"`
-	Password string         `gorm:"comment:用户登录密码"`
+	Password string         `gorm:"comment:用户登录密码" json:"-" `
 	DeptID   int            `gorm:"comment:用户登录密码"`
 	Dept     *SysDepartment `gorm:"foreignKey:DeptID;references:ID;comment:关联部门"`
 	Avatar   string         `gorm:"default:header.jpg;comment:用户头像"`
