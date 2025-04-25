@@ -48,7 +48,7 @@ func getChildrenList(menus []*response.MenuTreeRes, parentId uint) []*response.M
 
 func GetMenuRouteTree() (menus []*response.MenuRouteRes, err error) {
 	var menuList []*models.SysMenu
-	err = global.OPS_DB.Where("type != ?", 4).Order("sort").Preload("Params").Find(&menuList).Error
+	err = global.OPS_DB.Where("type != ?", models.SYS_MENU_TYPE_BUTTON).Order("sort").Preload("Params").Find(&menuList).Error
 	if err != nil {
 		return
 	}
@@ -86,9 +86,13 @@ func buildMenuRoute(menuList []*models.SysMenu, parentId uint) []*response.MenuR
 	return res
 }
 
-func GetMenuOptions() (menuOptions []*response.MenuOption, err error) {
+func GetMenuOptions(onlyParent bool) (menuOptions []*response.MenuOption, err error) {
 	var menuList []*models.SysMenu
-	err = global.OPS_DB.Order("sort").Find(&menuList).Error
+	if onlyParent {
+		err = global.OPS_DB.Where("type in ?", []interface{}{models.SYS_MENU_TYPE_CATALOG, models.SYS_MENU_TYPE_MENU}).Order("sort").Find(&menuList).Error
+	} else {
+		err = global.OPS_DB.Order("sort").Find(&menuList).Error
+	}
 	if err != nil {
 		return
 	}

@@ -63,7 +63,12 @@ func GetMenuRoutes(c *gin.Context) {
 }
 
 func GetMenuOptions(c *gin.Context) {
-	menuOptions, err := service.GetMenuOptions()
+	onlyParent := c.Query("onlyParent")
+	var onlyParentBool bool = false
+	if onlyParent == "true" {
+		onlyParentBool = true
+	}
+	menuOptions, err := service.GetMenuOptions(onlyParentBool)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

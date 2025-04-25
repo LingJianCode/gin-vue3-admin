@@ -4,6 +4,14 @@ import (
 	"my-ops-admin/global"
 )
 
+const (
+	SYS_MENU_TYPE_NULL    = 0 // 未知
+	SYS_MENU_TYPE_MENU    = 1 // 菜单
+	SYS_MENU_TYPE_CATALOG = 2 // 目录
+	SYS_MENU_TYPE_EXTLINK = 3 // 外链
+	SYS_MENU_TYPE_BUTTON  = 4 // 按钮
+)
+
 type SysMenu struct {
 	global.OPS_MODEL
 	AlwaysShow int64  `gorm:"comment:【目录】只有一个子路由是否始终显示" json:"alwaysShow,omitempty"`
