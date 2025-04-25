@@ -63,7 +63,8 @@ func GetMenuRoutes(c *gin.Context) {
 }
 
 func GetMenuOptions(c *gin.Context) {
-	onlyParent := c.Query("onlyParent")
+	onlyParent := c.DefaultQuery("onlyParent", "false")
+	global.OPS_LOGGER.Debug(onlyParent, zap.String("type", utils.GetType(onlyParent)))
 	var onlyParentBool bool = false
 	if onlyParent == "true" {
 		onlyParentBool = true

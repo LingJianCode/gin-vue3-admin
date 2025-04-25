@@ -57,3 +57,20 @@ func GetUserInfo(c *gin.Context) {
 	}
 	utils.OkWithDetailed(ReqUser, "获取成功", c)
 }
+
+func GetUserListPagenation(c *gin.Context) {
+	var upi request.UserPagenationInfo
+	err := c.ShouldBindQuery(&upi)
+	if err != nil {
+		global.OPS_LOGGER.Error("请求参数获取失败:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	userList, err := service.GetUserListPagenation(upi)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取用户分页列表出错:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.OkWithDetailed(userList, "获取成功", c)
+}

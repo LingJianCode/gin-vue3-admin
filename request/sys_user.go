@@ -23,3 +23,25 @@ type CreateUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type UserPagenationInfo struct {
+	// 创建时间范围
+	CreateTime0 string `form:"createTime[0]" binding:"timing" time_format:"2006-01-02"`
+	CreateTime1 string `form:"createTime[1]" binding:"timing" time_format:"2006-01-02"`
+	// 部门ID
+	DeptID string `form:"deptId"`
+	// 排序方式（正序:ASC；反序:DESC）
+	// Direction string `json:"direction,omitempty"`
+	// 排序的字段
+	// Field string `json:"field,omitempty"`
+	// 关键字(用户名/昵称/手机号)
+	Keywords string `form:"keywords"`
+	// 页码
+	PageNum int `form:"pageNum" binding:"required"`
+	// 每页记录数
+	PageSize int `form:"pageSize" binding:"required"`
+	// 角色ID
+	// RoleIDS string `json:"roleIds,omitempty"`
+	// 用户状态
+	Status string `form:"status"`
+}
