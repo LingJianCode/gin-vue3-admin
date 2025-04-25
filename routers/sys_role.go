@@ -10,5 +10,6 @@ func InitRoleRoutes(router *gin.RouterGroup) {
 	roleRouter := router.Group("/roles")
 	{
 		roleRouter.POST("", v1.CreateRole)
+		roleRouter.GET("/options", v1.GetRoleOptions)
 	}
 }

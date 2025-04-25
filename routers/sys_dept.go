@@ -11,5 +11,6 @@ func InitDeptRoutes(router *gin.RouterGroup) {
 	{
 		deptRouter.GET("", v1.GetDeptTree)
 		deptRouter.POST("", v1.CreateDept)
+		deptRouter.GET("/options", v1.GetDeptOptions)
 	}
 }

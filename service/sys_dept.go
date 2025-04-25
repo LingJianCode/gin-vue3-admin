@@ -59,3 +59,30 @@ func buildDeptTree(deptTree []*response.DeptTreeRes, parentId uint) []*response.
 	}
 	return nodes
 }
+
+func GetDeptOptionsTree() (deptOptions []*response.DeptOption, err error) {
+	var deptList []*models.SysDept
+	err = global.OPS_DB.Find(&deptList).Error
+	if err != nil {
+		return
+	}
+	deptOptions = buildDeptOptionsTree(deptList, 0)
+	return
+}
+
+func buildDeptOptionsTree(deptList []*models.SysDept, parentId uint) []*response.DeptOption {
+	var nodes []*response.DeptOption
+	if reflect.ValueOf(deptList).IsValid() {
+		for _, v := range deptList {
+			if v.ParentID == parentId {
+				deptOption := response.DeptOption{
+					Label: v.Name,
+					Value: v.ID,
+				}
+				deptOption.Children = buildDeptOptionsTree(deptList, v.ID)
+				nodes = append(nodes, &deptOption)
+			}
+		}
+	}
+	return nodes
+}

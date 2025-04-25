@@ -5,12 +5,12 @@ import "my-ops-admin/models"
 type MenuTreeRes struct {
 	models.SysMenu
 	// 子菜单
-	Children []*MenuTreeRes `gorm:"-" json:"children"`
+	Children []*MenuTreeRes `gorm:"-" json:"children,omitempty"`
 }
 
 type MenuRouteRes struct {
 	// 子路由列表
-	Children []*MenuRouteRes `json:"children"`
+	Children []*MenuRouteRes `json:"children,omitempty"`
 	// 组件路径
 	Component string `json:"component"`
 	// 必须这样嵌入才能在数据库查询中映射，如果使用 Meta Meta 在查询回来是空

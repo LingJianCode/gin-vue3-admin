@@ -44,3 +44,13 @@ func GetDeptTree(c *gin.Context) {
 
 	utils.OkWithDetailed(dept, "获取成功", c)
 }
+
+func GetDeptOptions(c *gin.Context) {
+	deptOptions, err := service.GetDeptOptionsTree()
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.OkWithDetailed(deptOptions, "获取成功", c)
+}

@@ -33,3 +33,13 @@ func CreateRole(c *gin.Context) {
 	}
 	utils.OkWithMessage("添加成功", c)
 }
+
+func GetRoleOptions(c *gin.Context) {
+	roleOptions, err := service.GetRoleOptionsTree()
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.OkWithDetailed(roleOptions, "获取成功", c)
+}
