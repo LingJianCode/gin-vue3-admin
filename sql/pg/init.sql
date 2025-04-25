@@ -1,0 +1,3 @@
+INSERT INTO "mypg"."sys_dept" ("id", "created_at", "updated_at", "deleted_at", "name", "code", "parent_id", "sort", "status") VALUES (1, '2025-04-24 15:42:52.309828+08', '2025-04-24 15:42:52.309828+08', NULL, '研发部', 'RD001', 0, 1, 0);
+
+INSERT INTO "mypg"."sys_user" ("id", "created_at", "updated_at", "deleted_at", "username", "nickname", "gender", "password", "dept_id", "avatar", "mobile", "status", "email", "openid") VALUES (2, '2025-04-24 15:43:05.695057+08', '2025-04-24 15:43:05.695057+08', NULL, 'admin', '景呈轩', 28, '$2a$10$LVGccIwqqimkuz3uWgOOsuRNyxaLcdBuPpjzSg0GqFss6AqRXSNay', 1, 'https://foruda.gitee.com/images/1723603502796844527/03cdca2a_716974.gif', '', 61, 'i1cl5v74@outlook.com', '17');
