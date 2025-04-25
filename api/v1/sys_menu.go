@@ -59,6 +59,15 @@ func GetMenuRoutes(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-
 	utils.OkWithDetailed(menus, "获取成功", c)
+}
+
+func GetMenuOptions(c *gin.Context) {
+	menuOptions, err := service.GetMenuOptions()
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.OkWithDetailed(menuOptions, "获取成功", c)
 }

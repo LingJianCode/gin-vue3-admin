@@ -13,6 +13,7 @@ func InitMenuRoutes(router *gin.RouterGroup) {
 		menuRouter.POST("", v1.CreateMenu)
 	}
 	{
+		menuRouter.GET("/options", v1.GetMenuOptions)
 		menuRouter.GET("/routes", v1.GetMenuRoutes)
 	}
 }

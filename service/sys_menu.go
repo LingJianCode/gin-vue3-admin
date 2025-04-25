@@ -85,3 +85,30 @@ func buildMenuRoute(menuList []*models.SysMenu, parentId uint) []*response.MenuR
 	}
 	return res
 }
+
+func GetMenuOptions() (menuOptions []*response.MenuOption, err error) {
+	var menuList []*models.SysMenu
+	err = global.OPS_DB.Order("sort").Find(&menuList).Error
+	if err != nil {
+		return
+	}
+	menuOptions = buildMenuOptions(menuList, 0)
+	return
+}
+
+func buildMenuOptions(menuList []*models.SysMenu, parentId uint) []*response.MenuOption {
+	var nodes []*response.MenuOption
+	if reflect.ValueOf(menuList).IsValid() {
+		for _, v := range menuList {
+			if v.ParentID == parentId {
+				menuOption := response.MenuOption{
+					Label: v.Name,
+					Value: v.ID,
+				}
+				menuOption.Children = buildMenuOptions(menuList, v.ID)
+				nodes = append(nodes, &menuOption)
+			}
+		}
+	}
+	return nodes
+}
