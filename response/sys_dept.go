@@ -4,7 +4,7 @@ import "my-ops-admin/models"
 
 type DeptTreeRes struct {
 	models.SysDept
-	Children []*DeptTreeRes `gorm:"-" json:"omitempty"`
+	Children []*DeptTreeRes `gorm:"-" json:"children,omitempty"`
 }
 
 type DeptOption struct {

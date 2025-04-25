@@ -55,5 +55,5 @@ func GetUserInfo(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(gin.H{"user": ReqUser}, "获取成功", c)
+	utils.OkWithDetailed(ReqUser, "获取成功", c)
 }

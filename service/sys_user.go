@@ -4,6 +4,7 @@ import (
 	"errors"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
+	"my-ops-admin/response"
 	"my-ops-admin/utils"
 
 	"gorm.io/gorm"
@@ -18,8 +19,17 @@ func CreateUser(u models.SysUser) error {
 	return global.OPS_DB.Create(&u).Error
 }
 
-func GetUserInfoByID(id uint) (models.SysUser, error) {
+func GetUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 	var user models.SysUser
-	err := global.OPS_DB.First(&user, id).Error
-	return user, err
+	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
+	cu = response.CurrentUser{
+		Avatar:   user.Avatar,
+		Nickname: user.Nickname,
+		UserID:   user.ID,
+		Username: user.Username,
+	}
+	for _, v := range user.Roles {
+		cu.Roles = append(cu.Roles, v.Code)
+	}
+	return
 }
