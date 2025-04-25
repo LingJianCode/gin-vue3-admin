@@ -24,6 +24,7 @@ func Routers() *gin.Engine {
 			routers.InitUserRoutes(private)
 			routers.InitDeptRoutes(private)
 			routers.InitMenuRoutes(private)
+			routers.InitRoleRoutes(private)
 		}
 	}
 	return opsRouter
