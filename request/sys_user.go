@@ -26,8 +26,8 @@ type CreateUser struct {
 
 type UserPagenationInfo struct {
 	// 创建时间范围
-	CreateTime0 string `form:"createTime[0]" binding:"timing" time_format:"2006-01-02"`
-	CreateTime1 string `form:"createTime[1]" binding:"timing" time_format:"2006-01-02"`
+	CreateTime0 string `form:"createTime[0]" binding:"dateformat" time_format:"2006-01-02"`
+	CreateTime1 string `form:"createTime[1]" binding:"dateformat" time_format:"2006-01-02"`
 	// 部门ID
 	DeptID string `form:"deptId"`
 	// 排序方式（正序:ASC；反序:DESC）
