@@ -104,6 +104,9 @@ func GetUserListPagenation(upi request.UserPagenationInfo) (ulp response.UserLis
 func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
 	var user models.SysUser
 	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
+	if err != nil {
+		return
+	}
 	uf = response.UserForm{
 		Avatar:   user.Avatar,
 		DeptID:   user.DeptID,

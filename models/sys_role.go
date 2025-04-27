@@ -10,6 +10,7 @@ type SysRole struct {
 	Sort      int64     `gorm:"comment:排序" json:"sort"`
 	Status    int64     `gorm:"comment:角色状态(1-正常；0-停用)" json:"status"`
 	Users     []SysUser `json:"-" gorm:"many2many:sys_user_role"`
+	Menus     []SysMenu `json:"-" gorm:"many2many:sys_role_menu"`
 }
 
 func (SysRole) TableName() string {

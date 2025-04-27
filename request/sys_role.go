@@ -15,13 +15,13 @@ type CreateRoleReq struct {
 
 type RolePagenationInfo struct {
 	// 结束日期
-	EndDate string `json:"endDate,omitempty"`
+	// EndDate string `json:"endDate,omitempty"`
 	// 关键字(角色名称/角色编码)
-	Keywords string `json:"keywords,omitempty"`
+	Keywords string `form:"keywords,omitempty"`
 	// 页码
-	PageNum int `json:"pageNum"  binding:"required,gte=1"`
+	PageNum int `form:"pageNum"  binding:"required,gte=1"`
 	// 每页记录数
-	PageSize int `json:"pageSize"  binding:"required,gte=10"`
+	PageSize int `form:"pageSize"  binding:"required,gte=10"`
 	// 开始日期
-	StartDate string `json:"startDate,omitempty"`
+	// StartDate string `json:"startDate,omitempty"`
 }

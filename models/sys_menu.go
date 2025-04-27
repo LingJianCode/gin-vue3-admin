@@ -30,6 +30,7 @@ type SysMenu struct {
 	// Parent   *SysMenu `gorm:"foreignKey:ParentID;references:ID;comment:父菜单ID"`
 	// 路由参数， 这种数组关联`Has Many`,需要在关联model中增加本model的ID，例如SysMenuID
 	Params []SysMenuParameter
+	Roles  []SysRole `json:"-" gorm:"many2many:sys_role_menu"`
 }
 
 // Param，键值对

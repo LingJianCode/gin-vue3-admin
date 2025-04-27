@@ -12,14 +12,14 @@ import (
 
 func CreateRole(r models.SysRole) error {
 	if !errors.Is(global.OPS_DB.Where("code = ?", r.Code).First(&models.SysRole{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("存在重复name，请修改name")
+		return errors.New("角色已存在")
 	}
 	return global.OPS_DB.Create(&r).Error
 }
 
 func GetRoleOptions() ([]response.RoleOption, error) {
 	var roleList []models.SysRole
-	err := global.OPS_DB.Find(&roleList).Error
+	err := global.OPS_DB.Order("sort").Find(&roleList).Error
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +45,51 @@ func GetRolePagenation(rpi request.RolePagenationInfo) (rp response.RolePage, er
 	if err != nil {
 		return
 	}
-	err = db.Limit(limit).Offset(offset).Find(&rp.List).Error
+	err = db.Order("sort").Limit(limit).Offset(offset).Find(&rp.List).Error
 	return
+}
+func GetRoleForm(id uint) (r models.SysRole, err error) {
+	err = global.OPS_DB.First(&r, id).Error
+	return
+}
+
+func UpdateRole(id uint, r models.SysRole) error {
+	var or models.SysRole
+	if errors.Is(global.OPS_DB.First(&or, id).Error, gorm.ErrRecordNotFound) {
+		return errors.New("角色不存在")
+	}
+	or.Code = r.Code
+	or.Name = r.Name
+	or.DataScope = r.DataScope
+	or.Sort = r.Sort
+	or.Status = r.Status
+	return global.OPS_DB.Save(&or).Error
+}
+
+func GetRoleMenu(roleId uint) ([]uint, error) {
+	var role models.SysRole
+	if errors.Is(global.OPS_DB.Order("sort").Preload("Menus").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
+		return nil, errors.New("角色不存在")
+	}
+	// 为空则返回空数组，而不是nil；使用var manuList []uint时,如果为空则会返回nil。
+	menuList := []uint{}
+	for _, v := range role.Menus {
+		menuList = append(menuList, v.ID)
+	}
+	return menuList, nil
+}
+
+func AssignMenuToRole(roleId uint, menuIds []uint) error {
+	var role models.SysRole
+	if errors.Is(global.OPS_DB.Order("sort").Preload("Menus").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
+		return errors.New("角色不存在")
+	}
+	var menus []models.SysMenu
+	for _, v := range menuIds {
+		menus = append(menus, models.SysMenu{
+			OPS_MODEL: global.OPS_MODEL{ID: v},
+		})
+	}
+	role.Menus = menus
+	return global.OPS_DB.Save(&role).Error
 }
