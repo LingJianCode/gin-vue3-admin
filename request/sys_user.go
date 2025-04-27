@@ -41,9 +41,9 @@ type UserPagenationInfo struct {
 	// 关键字(用户名/昵称/手机号)
 	Keywords string `form:"keywords"`
 	// 页码
-	PageNum int `form:"pageNum" binding:"required"`
+	PageNum int `form:"pageNum" binding:"required,gte=1"`
 	// 每页记录数
-	PageSize int `form:"pageSize" binding:"required"`
+	PageSize int `form:"pageSize" binding:"required,gte=10"`
 	// 角色ID
 	// RoleIDS string `json:"roleIds,omitempty"`
 	// 用户状态
