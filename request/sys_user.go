@@ -1,6 +1,6 @@
 package request
 
-type CreateUser struct {
+type UserInfo struct {
 	// 用户头像
 	Avatar string `json:"avatar,omitempty"`
 	// 部门ID

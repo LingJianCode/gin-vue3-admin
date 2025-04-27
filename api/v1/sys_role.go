@@ -31,7 +31,7 @@ func CreateRole(c *gin.Context) {
 		utils.FailWithMessage("添加失败", c)
 		return
 	}
-	utils.OkWithMessage("添加成功", c)
+	utils.SuccessWithMessage("添加成功", c)
 }
 
 func GetRoleOptions(c *gin.Context) {
@@ -41,5 +41,5 @@ func GetRoleOptions(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(roleOptions, "获取成功", c)
+	utils.SuccessWithDetailed(roleOptions, "获取成功", c)
 }

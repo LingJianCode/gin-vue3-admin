@@ -18,7 +18,7 @@ func GetMenusList(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(menus, "获取成功", c)
+	utils.SuccessWithDetailed(menus, "获取成功", c)
 }
 
 func CreateMenu(c *gin.Context) {
@@ -49,7 +49,7 @@ func CreateMenu(c *gin.Context) {
 		utils.FailWithMessage("添加失败", c)
 		return
 	}
-	utils.OkWithMessage("添加成功", c)
+	utils.SuccessWithMessage("添加成功", c)
 }
 
 func GetMenuRoutes(c *gin.Context) {
@@ -59,7 +59,7 @@ func GetMenuRoutes(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(menus, "获取成功", c)
+	utils.SuccessWithDetailed(menus, "获取成功", c)
 }
 
 func GetMenuOptions(c *gin.Context) {
@@ -75,5 +75,5 @@ func GetMenuOptions(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(menuOptions, "获取成功", c)
+	utils.SuccessWithDetailed(menuOptions, "获取成功", c)
 }

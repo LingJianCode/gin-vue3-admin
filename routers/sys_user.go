@@ -13,5 +13,7 @@ func InitUserRoutes(router *gin.RouterGroup) {
 		userRouter.GET("/me", v1.GetCurrentUserInfo)
 		userRouter.GET("/page", v1.GetUserListPagenation)
 		userRouter.GET("/:userId/form", v1.GetUserInfoFormById)
+		userRouter.PUT("/:userId/password/reset", v1.ResetUserPassword)
+		userRouter.PUT("/:userId", v1.UpdateUserInfo)
 	}
 }

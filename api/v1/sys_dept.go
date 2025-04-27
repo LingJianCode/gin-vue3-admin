@@ -31,7 +31,7 @@ func CreateDept(c *gin.Context) {
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
-	utils.OkWithMessage("创建部门成功", c)
+	utils.SuccessWithMessage("创建部门成功", c)
 }
 
 func GetDeptTree(c *gin.Context) {
@@ -42,7 +42,7 @@ func GetDeptTree(c *gin.Context) {
 		return
 	}
 
-	utils.OkWithDetailed(dept, "获取成功", c)
+	utils.SuccessWithDetailed(dept, "获取成功", c)
 }
 
 func GetDeptOptions(c *gin.Context) {
@@ -52,5 +52,5 @@ func GetDeptOptions(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(deptOptions, "获取成功", c)
+	utils.SuccessWithDetailed(deptOptions, "获取成功", c)
 }

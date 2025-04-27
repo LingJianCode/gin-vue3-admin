@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/request"
@@ -12,8 +13,20 @@ import (
 	"go.uber.org/zap"
 )
 
+func getUserIdFromParam(c *gin.Context) (uint, error) {
+	userId := c.Param("userId")
+	if userId == "" {
+		return 0, errors.New("userId不能为空")
+	}
+	id, err := strconv.Atoi(userId)
+	if err != nil {
+		return 0, errors.New("转换userId失败")
+	}
+	return uint(id), nil
+}
+
 func CreateUser(c *gin.Context) {
-	var cu request.CreateUser
+	var cu request.UserInfo
 	err := c.ShouldBindJSON(&cu)
 	if err != nil {
 		global.OPS_LOGGER.Error("创建用户参数异常", zap.Error(err))
@@ -48,7 +61,7 @@ func CreateUser(c *gin.Context) {
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
-	utils.OkWithMessage("注册成功", c)
+	utils.SuccessWithMessage("注册成功", c)
 }
 
 func GetCurrentUserInfo(c *gin.Context) {
@@ -64,7 +77,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(ReqUser, "获取成功", c)
+	utils.SuccessWithDetailed(ReqUser, "获取成功", c)
 }
 
 func GetUserListPagenation(c *gin.Context) {
@@ -81,26 +94,66 @@ func GetUserListPagenation(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(userList, "获取成功", c)
+	utils.SuccessWithDetailed(userList, "获取成功", c)
 }
 
 func GetUserInfoFormById(c *gin.Context) {
-	userId := c.Param("userId")
-	if userId == "" {
-		utils.FailWithMessage("获取失败，userId不能为空。", c)
+	userId, err := getUserIdFromParam(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	id, err := strconv.Atoi(userId)
+	res, err := service.GetUserInfoFormById(userId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetUserInfoFormById(uint(id))
+	utils.SuccessWithDetailed(res, "获取成功", c)
+}
+
+func ResetUserPassword(c *gin.Context) {
+	userId, err := getUserIdFromParam(c)
 	if err != nil {
-		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
-		utils.FailWithMessage("获取失败", c)
+		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
+		utils.FailWithMessage("失败", c)
 		return
 	}
-	utils.OkWithDetailed(res, "获取成功", c)
+	password := c.Query("password")
+	if password == "" {
+		global.OPS_LOGGER.Error("重置密码参数异常，password不能为空", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	err = service.ResetUserPassword(userId, password)
+	if err != nil {
+		global.OPS_LOGGER.Error("重置密码异常", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	utils.SuccessWithMessage("成功", c)
+}
+
+func UpdateUserInfo(c *gin.Context) {
+	var ui request.UserInfo
+	err := c.ShouldBindJSON(&ui)
+	if err != nil {
+		global.OPS_LOGGER.Error("用户参数异常", zap.Error(err))
+		utils.FailWithMessage(err.Error(), c)
+		return
+	}
+	userId, err := getUserIdFromParam(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	err = service.UpdateUserInfo(userId, ui)
+	if err != nil {
+		global.OPS_LOGGER.Error("更新用户信息失败", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	utils.SuccessWithMessage("成功", c)
 }

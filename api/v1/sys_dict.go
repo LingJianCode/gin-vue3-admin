@@ -30,7 +30,7 @@ func GetDictItems(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	utils.OkWithDetailed(res, "获取成功", c)
+	utils.SuccessWithDetailed(res, "获取成功", c)
 }
 
 func CreateDictItem(c *gin.Context)  {}

@@ -13,6 +13,7 @@ import (
 )
 
 func CreateUser(u models.SysUser) error {
+	// 这里后面需要改成事务操作
 	var user models.SysUser
 	if !errors.Is(global.OPS_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
 		return errors.New("用户名已注册")
@@ -119,4 +120,39 @@ func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
 		uf.RoleIDS = append(uf.RoleIDS, v.ID)
 	}
 	return
+}
+
+func ResetUserPassword(id uint, password string) error {
+	var user models.SysUser
+	if errors.Is(global.OPS_DB.First(&user, id).Error, gorm.ErrRecordNotFound) {
+		return errors.New("用户不存在")
+	}
+	user.Password = utils.BcryptHash(password)
+	return global.OPS_DB.Save(&user).Error
+}
+
+func UpdateUserInfo(id uint, ui request.UserInfo) error {
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		var user models.SysUser
+		if errors.Is(tx.First(&user, id).Error, gorm.ErrRecordNotFound) {
+			return errors.New("用户不存在")
+		}
+
+		// 删除用户关联角色
+		tx.Where("sys_user_id = ?", id).Delete(&models.SysUserRole{})
+		// 更新
+		user.Avatar = ui.Avatar
+		user.DeptID = ui.DeptID
+		user.Email = ui.Email
+		user.Gender = ui.Gender
+		user.Mobile = ui.Mobile
+		user.Nickname = ui.Nickname
+		user.Openid = ui.OpenID
+		user.Roles = []models.SysRole{}
+		// 重新关联
+		for _, v := range ui.RoleIDS {
+			user.Roles = append(user.Roles, models.SysRole{OPS_MODEL: global.OPS_MODEL{ID: v}})
+		}
+		return tx.Save(&user).Error
+	})
 }

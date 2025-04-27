@@ -26,7 +26,7 @@ func Captcha(c *gin.Context) {
 		return
 	}
 	global.OPS_LOGGER.Debug("获取验证码成功", zap.String("captchaKey", captchaKey), zap.String("answer", answer))
-	utils.OkWithData(response.Captcha{CaptchaKey: captchaKey, CaptchaBase64: captchaBase64}, c)
+	utils.SuccessWithData(response.Captcha{CaptchaKey: captchaKey, CaptchaBase64: captchaBase64}, c)
 }
 
 func Login(c *gin.Context) {
@@ -58,7 +58,7 @@ func TokenNext(c *gin.Context, user models.SysUser) {
 		utils.FailWithMessage("获取token失败", c)
 		return
 	}
-	utils.OkWithDetailed(response.LoginResponse{
+	utils.SuccessWithDetailed(response.LoginResponse{
 		TokenType:   "Bearer",
 		AccessToken: token,
 		ExpiresIn:   claims.RegisteredClaims.ExpiresAt.Unix() * 1000,
@@ -66,5 +66,5 @@ func TokenNext(c *gin.Context, user models.SysUser) {
 }
 
 func Logout(c *gin.Context) {
-	utils.Ok(c)
+	utils.Success(c)
 }
