@@ -6,6 +6,7 @@ import (
 	"my-ops-admin/request"
 	"my-ops-admin/service"
 	"my-ops-admin/utils"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -42,14 +43,14 @@ func CreateUser(c *gin.Context) {
 	utils.OkWithMessage("注册成功", c)
 }
 
-func GetUserInfo(c *gin.Context) {
+func GetCurrentUserInfo(c *gin.Context) {
 	id, err := utils.GetUserID(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	ReqUser, err := service.GetUserInfoByID(id)
+	ReqUser, err := service.GetCurrentUserInfoByID(id)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -73,4 +74,25 @@ func GetUserListPagenation(c *gin.Context) {
 		return
 	}
 	utils.OkWithDetailed(userList, "获取成功", c)
+}
+
+func GetUserInfoFormById(c *gin.Context) {
+	userId := c.Param("userId")
+	if userId == "" {
+		utils.FailWithMessage("获取失败，userId不能为空。", c)
+		return
+	}
+	id, err := strconv.Atoi(userId)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	res, err := service.GetUserInfoFormById(uint(id))
+	if err != nil {
+		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.OkWithDetailed(res, "获取成功", c)
 }

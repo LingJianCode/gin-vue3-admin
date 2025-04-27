@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/request"
@@ -21,7 +22,7 @@ func CreateUser(u models.SysUser) error {
 	return global.OPS_DB.Create(&u).Error
 }
 
-func GetUserInfoByID(id uint) (cu response.CurrentUser, err error) {
+func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 	var user models.SysUser
 	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
 	cu = response.CurrentUser{
@@ -96,6 +97,26 @@ func GetUserListPagenation(upi request.UserPagenationInfo) (ulp response.UserLis
 		}
 		user.RoleNames = utils.RemoveLastChar(roleNames)
 		ulp.List = append(ulp.List, user)
+	}
+	return
+}
+
+func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
+	var user models.SysUser
+	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
+	uf = response.UserForm{
+		Avatar:   user.Avatar,
+		DeptID:   user.DeptID,
+		Email:    user.Email,
+		Gender:   user.Gender,
+		ID:       user.ID,
+		Mobile:   user.Mobile,
+		Nickname: user.Nickname,
+		OpenID:   user.Openid,
+		Status:   user.Status,
+	}
+	for _, v := range user.Roles {
+		uf.RoleIDS = append(uf.RoleIDS, fmt.Sprintf("%d", v.ID))
 	}
 	return
 }

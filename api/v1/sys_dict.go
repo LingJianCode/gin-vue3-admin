@@ -20,6 +20,10 @@ func GetDictItemPagenation(c *gin.Context) {}
 
 func GetDictItems(c *gin.Context) {
 	dictCode := c.Param("dictCode")
+	if dictCode == "" {
+		utils.FailWithMessage("获取失败，dictCode不能为空。", c)
+		return
+	}
 	res, err := service.GetDictItem(dictCode)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
