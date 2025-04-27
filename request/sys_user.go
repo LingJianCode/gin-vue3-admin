@@ -16,7 +16,7 @@ type CreateUser struct {
 	// 微信openId
 	OpenID string `json:"openId,omitempty"`
 	// 角色ID集合
-	RoleIDS []int64 `json:"roleIds"`
+	RoleIDS []uint `json:"roleIds"`
 	// 用户状态(1:正常;0:禁用)
 	Status int8 `json:"status,omitempty"`
 	// 用户名

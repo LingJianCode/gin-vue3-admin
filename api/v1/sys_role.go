@@ -35,7 +35,7 @@ func CreateRole(c *gin.Context) {
 }
 
 func GetRoleOptions(c *gin.Context) {
-	roleOptions, err := service.GetRoleOptionsTree()
+	roleOptions, err := service.GetRoleOptions()
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

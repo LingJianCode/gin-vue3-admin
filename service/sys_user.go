@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/request"
@@ -114,9 +113,10 @@ func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
 		Nickname: user.Nickname,
 		OpenID:   user.Openid,
 		Status:   user.Status,
+		Username: user.Username,
 	}
 	for _, v := range user.Roles {
-		uf.RoleIDS = append(uf.RoleIDS, fmt.Sprintf("%d", v.ID))
+		uf.RoleIDS = append(uf.RoleIDS, v.ID)
 	}
 	return
 }

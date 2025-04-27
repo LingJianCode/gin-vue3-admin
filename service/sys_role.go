@@ -16,7 +16,7 @@ func CreateRole(r models.SysRole) error {
 	return global.OPS_DB.Create(&r).Error
 }
 
-func GetRoleOptionsTree() ([]response.RoleOption, error) {
+func GetRoleOptions() ([]response.RoleOption, error) {
 	var roleList []models.SysRole
 	err := global.OPS_DB.Find(&roleList).Error
 	if err != nil {

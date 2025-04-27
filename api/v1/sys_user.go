@@ -20,6 +20,12 @@ func CreateUser(c *gin.Context) {
 		utils.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	var roles []models.SysRole
+	for _, v := range cu.RoleIDS {
+		role := models.SysRole{OPS_MODEL: global.OPS_MODEL{ID: v}}
+		roles = append(roles, role)
+	}
 	// user := models.SysUser{}：会在栈上分配内存，当该变量超出作用域时，系统会自动回收内存。
 	// user := &models.SysUser{}：会在堆上分配内存，需依靠 Go 的垃圾回收机制来回收内存。
 	user := &models.SysUser{
@@ -33,7 +39,9 @@ func CreateUser(c *gin.Context) {
 		Status:   cu.Status,
 		Email:    cu.Email,
 		Openid:   cu.OpenID,
+		Roles:    roles,
 	}
+
 	err = service.CreateUser(*user)
 	if err != nil {
 		global.OPS_LOGGER.Error("创建用户异常", zap.Error(err))
