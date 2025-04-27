@@ -26,6 +26,7 @@ type CreateUser struct {
 
 type UserPagenationInfo struct {
 	// 验证器文档：https://pkg.go.dev/github.com/go-playground/validator/v10#hdr-Baked_In_Validators_and_Tags
+	// dateformat是自定义验证器，内置验证器已经有了时间格式验证
 	// 创建时间范围
 	CreateTime0 string `form:"createTime[0]" binding:"omitempty,dateformat" time_format:"2006-01-02"`
 	// CreateTime1 string `form:"createTime[1]" binding:"dateformat" time_format:"2006-01-02"`
