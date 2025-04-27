@@ -34,13 +34,14 @@ func InitDB() {
 func AutoMigrate() {
 	db := global.OPS_DB
 	err := db.AutoMigrate(
-
 		models.SysUserRole{},
 		models.SysRole{},
 		models.SysUser{},
 		models.SysDept{},
 		models.SysMenu{},
 		models.SysMenuParameter{},
+		models.SysDict{},
+		models.SysDictItem{},
 	)
 	if err != nil {
 		global.OPS_LOGGER.Error("AutoMigrate table failed", zap.Error(err))
