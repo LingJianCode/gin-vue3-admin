@@ -34,7 +34,7 @@ func GetRoleOptions() ([]response.RoleOption, error) {
 	return roleOptions, nil
 }
 
-func GetRolePagenation(rpi request.RolePagenationInfo) (rp response.RolePage, err error) {
+func GetRolePagination(rpi request.RolePaginationInfo) (rp response.RolePaginationRes, err error) {
 	db := global.OPS_DB.Model(&models.SysRole{})
 	limit := rpi.PageSize
 	offset := rpi.PageSize * (rpi.PageNum - 1)

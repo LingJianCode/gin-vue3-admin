@@ -46,15 +46,15 @@ func GetRoleOptions(c *gin.Context) {
 	utils.SuccessWithDetailed(roleOptions, "获取成功", c)
 }
 
-func GetRolePagenation(c *gin.Context) {
-	var rpi request.RolePagenationInfo
+func GetRolePagination(c *gin.Context) {
+	var rpi request.RolePaginationInfo
 	err := c.ShouldBindQuery(&rpi)
 	if err != nil {
 		global.OPS_LOGGER.Error("请求参数获取失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetRolePagenation(rpi)
+	res, err := service.GetRolePagination(rpi)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

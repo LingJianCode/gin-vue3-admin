@@ -14,7 +14,7 @@ func GetDictItemList(dictCode string) (dtList []*response.DictItem, err error) {
 	}
 	return
 }
-func GetDictItemListPagenation(dictCode string, dipi request.DictItemPagenationInfo) (diRes response.DictItemPageRes, err error) {
+func GetDictItemListPagination(dictCode string, dipi request.DictItemPaginationInfo) (diRes response.DictItemPaginationRes, err error) {
 	db := global.OPS_DB.Model(&models.SysDictItem{})
 	limit := dipi.PageSize
 	offset := dipi.PageSize * (dipi.PageNum - 1)

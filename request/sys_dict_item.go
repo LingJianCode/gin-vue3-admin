@@ -1,6 +1,6 @@
 package request
 
-type DictItemPagenationInfo struct {
+type DictItemPaginationInfo struct {
 	// 关键字(字典名称)
 	Keywords string `form:"keywords"  binding:"omitempty"`
 	// 页码

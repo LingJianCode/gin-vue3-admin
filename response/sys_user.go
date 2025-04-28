@@ -15,7 +15,7 @@ type CurrentUser struct {
 	Username string `json:"username"`
 }
 
-type UserListPage struct {
+type UserListPagination struct {
 	List  []User `json:"list,omitempty"`
 	Total int64  `json:"total,omitempty"`
 }

@@ -11,7 +11,7 @@ type CreateDict struct {
 	Status int64 `json:"status,omitempty"`
 }
 
-type DictPagenationInfo struct {
+type DictPaginationInfo struct {
 	// 关键字(字典名称)
 	Keywords string `form:"keywords"  binding:"omitempty"`
 	// 页码

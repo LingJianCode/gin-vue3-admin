@@ -7,7 +7,7 @@ import (
 	"my-ops-admin/response"
 )
 
-func GetDictPagenation(dpi request.DictPagenationInfo) (dictPageRes response.DictPagenationRes, err error) {
+func GetDictPagination(dpi request.DictPaginationInfo) (dictPageRes response.DictPaginationRes, err error) {
 	db := global.OPS_DB.Model(&models.SysDict{})
 	limit := dpi.PageSize
 	offset := dpi.PageSize * (dpi.PageNum - 1)

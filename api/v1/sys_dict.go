@@ -25,15 +25,15 @@ func getDictIdFromParam(c *gin.Context) (uint, error) {
 }
 
 func GetDicts(c *gin.Context) {}
-func GetDictsPagenation(c *gin.Context) {
-	var dpi request.DictPagenationInfo
+func GetDictsPagination(c *gin.Context) {
+	var dpi request.DictPaginationInfo
 	err := c.ShouldBindQuery(&dpi)
 	if err != nil {
 		global.OPS_LOGGER.Error("请求参数获取失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictPagenation(dpi)
+	res, err := service.GetDictPagination(dpi)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取字典分页列表出错:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -68,21 +68,21 @@ func getDictCodeFromParam(c *gin.Context) (string, error) {
 	return dictCode, nil
 }
 
-func GetDictItemListPagenation(c *gin.Context) {
+func GetDictItemListPagination(c *gin.Context) {
 	dictCode, err := getDictCodeFromParam(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("请求参数dictCode获取失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	var dipi request.DictItemPagenationInfo
+	var dipi request.DictItemPaginationInfo
 	err = c.ShouldBindQuery(&dipi)
 	if err != nil {
-		global.OPS_LOGGER.Error("请求参数DictItemPagenationInfo获取失败:", zap.Error(err))
+		global.OPS_LOGGER.Error("请求参数DictItemPagenitionInfo获取失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictItemListPagenation(dictCode, dipi)
+	res, err := service.GetDictItemListPagination(dictCode, dipi)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取字典项分页列表出错:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

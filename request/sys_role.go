@@ -13,7 +13,7 @@ type CreateRoleReq struct {
 	Status int64 `json:"status"`
 }
 
-type RolePagenationInfo struct {
+type RolePaginationInfo struct {
 	// 结束日期
 	// EndDate string `json:"endDate,omitempty"`
 	// 关键字(角色名称/角色编码)

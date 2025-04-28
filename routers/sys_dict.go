@@ -11,7 +11,7 @@ func InitDictRoutes(router *gin.RouterGroup) {
 	// 字典
 	{
 		dictRouter.GET("", v1.GetDicts)
-		dictRouter.GET("/page", v1.GetDictsPagenation)
+		dictRouter.GET("/page", v1.GetDictsPagination)
 		dictRouter.POST("", v1.CreateDict)
 		dictRouter.GET("/:dictId/form", v1.GetDictForm)
 		dictRouter.PUT("/:dictId", v1.UpdateDict)
@@ -20,7 +20,7 @@ func InitDictRoutes(router *gin.RouterGroup) {
 	// 字典项
 	dictItemRouter := router.Group("/dict")
 	{
-		dictItemRouter.GET("/:dictCode/items/page", v1.GetDictItemListPagenation)
+		dictItemRouter.GET("/:dictCode/items/page", v1.GetDictItemListPagination)
 		dictItemRouter.GET("/:dictCode/items", v1.GetDictItemList)
 		dictItemRouter.POST("/:dictCode/items", v1.CreateDictItem)
 		dictItemRouter.GET("/:dictCode/items/:itemId/form", v1.GetDictItemForm)

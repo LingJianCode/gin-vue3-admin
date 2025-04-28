@@ -83,7 +83,7 @@ func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 	return
 }
 
-func GetUserListPagenation(upi request.UserPagenationInfo) (ulp response.UserListPage, err error) {
+func GetUserListPagination(upi request.UserPaginationInfo) (ulp response.UserListPagination, err error) {
 	var userList []models.SysUser
 	db := global.OPS_DB.Model(&models.SysUser{})
 	limit := upi.PageSize

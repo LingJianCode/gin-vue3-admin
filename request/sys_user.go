@@ -24,7 +24,7 @@ type UserInfo struct {
 	Password string `json:"password"`
 }
 
-type UserPagenationInfo struct {
+type UserPaginationInfo struct {
 	// 验证器文档：https://pkg.go.dev/github.com/go-playground/validator/v10#hdr-Baked_In_Validators_and_Tags
 	// dateformat是自定义验证器，内置验证器已经有了时间格式验证
 	// 创建时间范围

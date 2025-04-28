@@ -13,7 +13,7 @@ type RoleOption struct {
 	Value uint `json:"value"`
 }
 
-type RolePage struct {
+type RolePaginationRes struct {
 	List  []models.SysRole `json:"list,omitempty"`
 	Total int64            `json:"total,omitempty"`
 }

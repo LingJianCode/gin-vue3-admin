@@ -11,7 +11,7 @@ type DictItem struct {
 	Value string `json:"value,omitempty"`
 }
 
-type DictItemPageRes struct {
+type DictItemPaginationRes struct {
 	List  []models.SysDictItem `json:"list,omitempty"`
 	Total int64                `json:"total,omitempty"`
 }
