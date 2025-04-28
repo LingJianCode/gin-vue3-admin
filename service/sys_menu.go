@@ -56,12 +56,20 @@ func GetMenuRouteTree(userId uint) (menus []*response.MenuRouteRes, err error) {
 		return
 	}
 	var roleIds []uint
+	var rootFlag bool = false
 	for _, v := range user.Roles {
+		if v.Code == "ROOT" {
+			rootFlag = true
+			break
+		}
 		roleIds = append(roleIds, v.ID)
 	}
 	var menuList []*models.SysMenu
-	err = global.OPS_DB.
-		Distinct(`
+	if rootFlag {
+		err = global.OPS_DB.Where("type != ?", models.SYS_MENU_TYPE_BUTTON).Order("sort").Preload("Params").Find(&menuList).Error
+	} else {
+		err = global.OPS_DB.
+			Distinct(`
 				"sys_menu"."id",
 				"sys_menu"."created_at",
 				"sys_menu"."updated_at",
@@ -80,11 +88,12 @@ func GetMenuRouteTree(userId uint) (menus []*response.MenuRouteRes, err error) {
 				"sys_menu"."type",
 				"sys_menu"."visible"
 				`).
-		Joins(`JOIN "sys_role_menu" ON "sys_role_menu"."sys_menu_id" = "sys_menu"."id" AND "sys_role_menu"."sys_role_id" in ?`, roleIds).
-		Where(`"sys_menu"."type" != ?`, models.SYS_MENU_TYPE_BUTTON).
-		Order(`"sys_menu"."sort"`).
-		Preload("Params").
-		Find(&menuList).Error
+			Joins(`JOIN "sys_role_menu" ON "sys_role_menu"."sys_menu_id" = "sys_menu"."id" AND "sys_role_menu"."sys_role_id" in ?`, roleIds).
+			Where(`"sys_menu"."type" != ?`, models.SYS_MENU_TYPE_BUTTON).
+			Order(`"sys_menu"."sort"`).
+			Preload("Params").
+			Find(&menuList).Error
+	}
 	if err != nil {
 		return
 	}
