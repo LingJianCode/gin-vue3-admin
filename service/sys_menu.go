@@ -140,6 +140,13 @@ func UpdateMenu(id uint, menuReq request.MenuInfo) error {
 	return global.OPS_DB.Save(&menu).Error
 }
 
+// DeleteMenu
+// 是否需要对菜单下的子节点进行递归删除？
+//
+//	@param uint
+//	@return error
+//	@author lingjian
+//	@date 2025-04-28 11:02:41
 func DeleteMenu(id uint) error {
 	return global.OPS_DB.Delete(&models.SysMenu{}, id).Error
 }
