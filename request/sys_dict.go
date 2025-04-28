@@ -10,3 +10,12 @@ type CreateDict struct {
 	// 字典状态（1-启用，0-禁用）
 	Status int64 `json:"status,omitempty"`
 }
+
+type DictPagenationInfo struct {
+	// 关键字(字典名称)
+	Keywords string `form:"keywords"  binding:"omitempty"`
+	// 页码
+	PageNum int `form:"pageNum" binding:"required,gte=1"`
+	// 每页记录数
+	PageSize int `form:"pageSize" binding:"required,gte=10"`
+}
