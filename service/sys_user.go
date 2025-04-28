@@ -76,6 +76,7 @@ func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 		Order(`"sys_menu"."sort"`).
 		Preload("Params").
 		Find(&menuList).Error
+	cu.Perms = []string{}
 	for _, m := range menuList {
 		cu.Perms = append(cu.Perms, m.Perm)
 	}
