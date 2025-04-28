@@ -11,6 +11,9 @@ func InitMenuRoutes(router *gin.RouterGroup) {
 	{
 		menuRouter.GET("", v1.GetMenusList)
 		menuRouter.POST("", v1.CreateMenu)
+		menuRouter.PUT("/:menuId", v1.UpdateMenu)
+		menuRouter.DELETE("/:menuId", v1.DeleteMenu)
+		menuRouter.GET("/:menuId/form", v1.GetMenuForm)
 	}
 	{
 		menuRouter.GET("/options", v1.GetMenuOptions)

@@ -19,7 +19,7 @@ import (
 func CreateDept(d models.SysDept) error {
 	var sd models.SysDept
 	if !errors.Is(global.OPS_DB.Where("code = ?", d.Code).First(&sd).Error, gorm.ErrRecordNotFound) {
-		return errors.New("用户名已注册")
+		return errors.New("部门编码已注册")
 	}
 	return global.OPS_DB.Create(&d).Error
 }

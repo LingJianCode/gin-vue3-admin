@@ -3,7 +3,7 @@ package request
 import "my-ops-admin/models"
 
 // MenuForm，菜单表单对象
-type CreateMenuReq struct {
+type MenuInfo struct {
 	// 【目录】只有一个子路由是否始终显示
 	AlwaysShow int64 `json:"alwaysShow,omitempty"`
 	// 组件路径(vue页面完整路径，省略.vue后缀)

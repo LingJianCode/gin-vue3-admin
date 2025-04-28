@@ -15,6 +15,7 @@ import (
 func CreateUser(u models.SysUser) error {
 	// 这里后面需要改成事务操作
 	var user models.SysUser
+	// 这里感觉写的有问题，应该所有错误都返回
 	if !errors.Is(global.OPS_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
 		return errors.New("用户名已注册")
 	}
@@ -127,8 +128,9 @@ func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
 
 func ResetUserPassword(id uint, password string) error {
 	var user models.SysUser
-	if errors.Is(global.OPS_DB.First(&user, id).Error, gorm.ErrRecordNotFound) {
-		return errors.New("用户不存在")
+	err := global.OPS_DB.First(&user, id).Error
+	if err != nil {
+		return err
 	}
 	user.Password = utils.BcryptHash(password)
 	return global.OPS_DB.Save(&user).Error
@@ -137,8 +139,9 @@ func ResetUserPassword(id uint, password string) error {
 func UpdateUserInfo(id uint, ui request.UserInfo) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var user models.SysUser
-		if errors.Is(tx.First(&user, id).Error, gorm.ErrRecordNotFound) {
-			return errors.New("用户不存在")
+		err := tx.First(&user, id).Error
+		if err != nil {
+			return err
 		}
 
 		// 删除用户关联角色

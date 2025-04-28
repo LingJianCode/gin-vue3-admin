@@ -4,6 +4,7 @@ import (
 	"errors"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
+	"my-ops-admin/request"
 	"my-ops-admin/response"
 	"reflect"
 
@@ -11,6 +12,7 @@ import (
 )
 
 func CreateMenu(menu models.SysMenu) error {
+	// 这里感觉写的有问题，应该所有错误都返回
 	if !errors.Is(global.OPS_DB.Where("name = ?", menu.Name).First(&models.SysMenu{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在重复name，请修改name")
 	}
@@ -115,4 +117,37 @@ func buildMenuOptions(menuList []*models.SysMenu, parentId uint) []*response.Men
 		}
 	}
 	return nodes
+}
+
+func UpdateMenu(id uint, menuReq request.MenuInfo) error {
+	var menu models.SysMenu
+	if errors.Is(global.OPS_DB.First(&menu, id).Error, gorm.ErrRecordNotFound) {
+		return errors.New("记录不存在")
+	}
+	menu.AlwaysShow = menuReq.AlwaysShow
+	menu.Component = menuReq.Component
+	menu.Icon = menuReq.Icon
+	menu.KeepAlive = menuReq.KeepAlive
+	menu.Name = menuReq.Name
+	menu.Params = menuReq.Params
+	menu.Perm = menuReq.Perm
+	menu.Redirect = menuReq.Redirect
+	menu.RouteName = menuReq.RouteName
+	menu.RoutePath = menuReq.RoutePath
+	menu.Sort = menuReq.Sort
+	menu.Visible = menuReq.Visible
+	menu.ParentID = menuReq.ParentID
+	return global.OPS_DB.Save(&menu).Error
+}
+
+func DeleteMenu(id uint) error {
+	return global.OPS_DB.Delete(&models.SysMenu{}, id).Error
+}
+
+func GetMenuForm(id uint) (menu models.SysMenu, err error) {
+	if errors.Is(global.OPS_DB.First(&menu, id).Error, gorm.ErrRecordNotFound) {
+		err = errors.New("记录不存在")
+		return
+	}
+	return
 }

@@ -11,6 +11,7 @@ import (
 )
 
 func CreateRole(r models.SysRole) error {
+	// 这里感觉写的有问题，应该所有错误都返回
 	if !errors.Is(global.OPS_DB.Where("code = ?", r.Code).First(&models.SysRole{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("角色已存在")
 	}
