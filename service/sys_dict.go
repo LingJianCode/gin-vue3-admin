@@ -21,3 +21,8 @@ func GetDictPagenation(dpi request.DictPagenationInfo) (dictPageRes response.Dic
 	err = db.Limit(limit).Offset(offset).Find(&dictPageRes.List).Error
 	return
 }
+
+func GetDictForm(id uint) (dict models.SysDict, err error) {
+	err = global.OPS_DB.First(&dict, id).Error
+	return
+}

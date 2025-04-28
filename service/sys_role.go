@@ -85,6 +85,10 @@ func AssignMenuToRole(roleId uint, menuIds []uint) error {
 	if errors.Is(global.OPS_DB.Order("sort").Preload("Menus").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
 		return errors.New("角色不存在")
 	}
+	err := global.OPS_DB.Where("sys_role_id = ?", roleId).Delete(&models.SysRoleMenu{}).Error
+	if err != nil {
+		return err
+	}
 	var menus []models.SysMenu
 	for _, v := range menuIds {
 		menus = append(menus, models.SysMenu{

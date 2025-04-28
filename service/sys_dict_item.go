@@ -7,14 +7,14 @@ import (
 	"my-ops-admin/response"
 )
 
-func GetDictItem(dictCode string) (dtList []*response.DictItem, err error) {
+func GetDictItemList(dictCode string) (dtList []*response.DictItem, err error) {
 	err = global.OPS_DB.Model(&models.SysDictItem{}).Where("dict_code = ?", dictCode).Find(&dtList).Error
 	if err != nil {
 		return
 	}
 	return
 }
-func GetDictItemPagenation(dictCode string, dipi request.DictItemPagenationInfo) (diRes response.DictItemPageRes, err error) {
+func GetDictItemListPagenation(dictCode string, dipi request.DictItemPagenationInfo) (diRes response.DictItemPageRes, err error) {
 	db := global.OPS_DB.Model(&models.SysDictItem{})
 	limit := dipi.PageSize
 	offset := dipi.PageSize * (dipi.PageNum - 1)
@@ -27,5 +27,13 @@ func GetDictItemPagenation(dictCode string, dipi request.DictItemPagenationInfo)
 		return
 	}
 	err = db.Where("dict_code = ?", dictCode).Limit(limit).Offset(offset).Find(&diRes.List).Error
+	return
+}
+
+func GetDictItemForm(dictCode string, itemId uint) (item models.SysDictItem, err error) {
+	err = global.OPS_DB.Model(&models.SysDictItem{}).Where("dict_code = ?", dictCode).First(&item, itemId).Error
+	if err != nil {
+		return
+	}
 	return
 }
