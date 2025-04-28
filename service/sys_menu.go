@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
 	"my-ops-admin/request"
@@ -152,9 +153,10 @@ func DeleteMenu(id uint) error {
 }
 
 func GetMenuForm(id uint) (menu models.SysMenu, err error) {
-	if errors.Is(global.OPS_DB.First(&menu, id).Error, gorm.ErrRecordNotFound) {
+	if errors.Is(global.OPS_DB.Preload("Params").First(&menu, id).Error, gorm.ErrRecordNotFound) {
 		err = errors.New("记录不存在")
 		return
 	}
+	fmt.Println("menu", menu.ParentID)
 	return
 }
