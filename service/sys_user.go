@@ -26,14 +26,58 @@ func CreateUser(u models.SysUser) error {
 func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 	var user models.SysUser
 	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
+	if err != nil {
+		return
+	}
 	cu = response.CurrentUser{
 		Avatar:   user.Avatar,
 		Nickname: user.Nickname,
 		UserID:   user.ID,
 		Username: user.Username,
 	}
+
+	var roleIds []uint
 	for _, v := range user.Roles {
 		cu.Roles = append(cu.Roles, v.Code)
+		roleIds = append(roleIds, v.ID)
+	}
+	// 获取角色的按钮权限
+	/* 这里需要修改为使用join
+		 SELECT
+	            DISTINCT t2.perm
+	        FROM
+	            sys_role_menu t1
+	                INNER JOIN sys_menu t2 ON t2.id = t1.menu_id
+	                INNER JOIN sys_role t3 ON t3.id = t1.role_id
+	        WHERE
+	            t2.type = '${@com.youlai.boot.system.enums.MenuTypeEnum@BUTTON.getValue()}'
+	            AND t2.perm IS NOT NULL
+	            AND t3.CODE IN
+	            <foreach collection="roles" item="role" separator="," open="(" close=")">
+	                #{role}
+	            </foreach>
+	*/
+	// var roleList []models.SysRole
+	// flag := map[uint]bool{}
+	// err = global.OPS_DB.Where("id in ?", roleIds).Preload("Menus").Find(&roleList).Error
+	// for _, role := range roleList {
+	// 	for _, menu := range role.Menus {
+	// 		if menu.Type == models.SYS_MENU_TYPE_BUTTON && !flag[menu.ID] {
+	// 			flag[menu.ID] = true
+	// 			cu.Perms = append(cu.Perms, menu.Perm)
+	// 		}
+	// 	}
+	// }
+	var menuList []*models.SysMenu
+	err = global.OPS_DB.
+		Distinct(`"sys_menu"."id","sys_menu"."perm","sys_menu"."sort"`).
+		Joins(`JOIN "sys_role_menu" ON "sys_role_menu"."sys_menu_id" = "sys_menu"."id" AND "sys_role_menu"."sys_role_id" in ?`, roleIds).
+		Where(`"sys_menu"."type" = ?`, models.SYS_MENU_TYPE_BUTTON).
+		Order(`"sys_menu"."sort"`).
+		Preload("Params").
+		Find(&menuList).Error
+	for _, m := range menuList {
+		cu.Perms = append(cu.Perms, m.Perm)
 	}
 	return
 }

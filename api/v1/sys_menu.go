@@ -66,7 +66,13 @@ func CreateMenu(c *gin.Context) {
 }
 
 func GetMenuRoutes(c *gin.Context) {
-	menus, err := service.GetMenuRouteTree()
+	userId, err := utils.GetUserID(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	menus, err := service.GetMenuRouteTree(userId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

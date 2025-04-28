@@ -49,12 +49,46 @@ func getChildrenList(menus []*response.MenuTreeRes, parentId uint) []*response.M
 	return nodes
 }
 
-func GetMenuRouteTree() (menus []*response.MenuRouteRes, err error) {
-	var menuList []*models.SysMenu
-	err = global.OPS_DB.Where("type != ?", models.SYS_MENU_TYPE_BUTTON).Order("sort").Preload("Params").Find(&menuList).Error
+func GetMenuRouteTree(userId uint) (menus []*response.MenuRouteRes, err error) {
+	var user models.SysUser
+	err = global.OPS_DB.Preload("Roles").First(&user, userId).Error
 	if err != nil {
 		return
 	}
+	var roleIds []uint
+	for _, v := range user.Roles {
+		roleIds = append(roleIds, v.ID)
+	}
+	var menuList []*models.SysMenu
+	err = global.OPS_DB.
+		Distinct(`
+				"sys_menu"."id",
+				"sys_menu"."created_at",
+				"sys_menu"."updated_at",
+				"sys_menu"."deleted_at",
+				"sys_menu"."always_show",
+				"sys_menu"."component",
+				"sys_menu"."icon",
+				"sys_menu"."keep_alive",
+				"sys_menu"."name",
+				"sys_menu"."parent_id",
+				"sys_menu"."perm",
+				"sys_menu"."redirect",
+				"sys_menu"."route_name",
+				"sys_menu"."route_path",
+				"sys_menu"."sort",
+				"sys_menu"."type",
+				"sys_menu"."visible"
+				`).
+		Joins(`JOIN "sys_role_menu" ON "sys_role_menu"."sys_menu_id" = "sys_menu"."id" AND "sys_role_menu"."sys_role_id" in ?`, roleIds).
+		Where(`"sys_menu"."type" != ?`, models.SYS_MENU_TYPE_BUTTON).
+		Order(`"sys_menu"."sort"`).
+		Preload("Params").
+		Find(&menuList).Error
+	if err != nil {
+		return
+	}
+
 	menu := buildMenuRoute(menuList, 0)
 	return menu, nil
 }
