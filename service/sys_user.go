@@ -162,3 +162,8 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 		return tx.Save(&user).Error
 	})
 }
+
+func DeleteUserById(id uint) error {
+	// 要不要删除关联角色信息
+	return global.OPS_DB.Delete(&models.SysUser{}, id).Error
+}

@@ -157,3 +157,19 @@ func UpdateUserInfo(c *gin.Context) {
 	}
 	utils.SuccessWithMessage("成功", c)
 }
+
+func DeleteUser(c *gin.Context) {
+	userId, err := getUserIdFromParam(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	err = service.DeleteUserById(userId)
+	if err != nil {
+		global.OPS_LOGGER.Error("删除用户失败", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	utils.SuccessWithMessage("成功", c)
+}
