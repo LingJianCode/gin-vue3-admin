@@ -67,7 +67,7 @@ func UpdateRole(id uint, r models.SysRole) error {
 	return global.OPS_DB.Save(&or).Error
 }
 
-func GetRoleMenu(roleId uint) ([]uint, error) {
+func GetRoleMenus(roleId uint) ([]uint, error) {
 	var role models.SysRole
 	if errors.Is(global.OPS_DB.Order("sort").Preload("Menus").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
 		return nil, errors.New("角色不存在")
@@ -96,5 +96,37 @@ func AssignMenuToRole(roleId uint, menuIds []uint) error {
 		})
 	}
 	role.Menus = menus
+	return global.OPS_DB.Save(&role).Error
+}
+
+func GetRoleApis(roleId uint) ([]uint, error) {
+	var role models.SysRole
+	if errors.Is(global.OPS_DB.Order("sort").Preload("Apis").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
+		return nil, errors.New("角色不存在")
+	}
+	// 为空则返回空数组，而不是nil；使用var manuList []uint时,如果为空则会返回nil。
+	apiList := []uint{}
+	for _, v := range role.Apis {
+		apiList = append(apiList, v.ID)
+	}
+	return apiList, nil
+}
+
+func AssignApiToRole(roleId uint, apiIds []uint) error {
+	var role models.SysRole
+	if errors.Is(global.OPS_DB.Order("sort").Preload("Apis").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
+		return errors.New("角色不存在")
+	}
+	err := global.OPS_DB.Where("sys_role_id = ?", roleId).Delete(&models.SysRoleApi{}).Error
+	if err != nil {
+		return err
+	}
+	var apis []models.SysApi
+	for _, v := range apiIds {
+		apis = append(apis, models.SysApi{
+			OPS_MODEL: global.OPS_MODEL{ID: v},
+		})
+	}
+	role.Apis = apis
 	return global.OPS_DB.Save(&role).Error
 }

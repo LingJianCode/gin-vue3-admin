@@ -110,14 +110,14 @@ func UpdateRole(c *gin.Context) {
 	}
 	utils.SuccessWithMessage("成功", c)
 }
-func GetRoleMenu(c *gin.Context) {
+func GetRoleMenus(c *gin.Context) {
 	roleId, err := getRoleIdFromParam(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取roleId失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetRoleMenu(roleId)
+	res, err := service.GetRoleMenus(roleId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取角色菜单失败:", zap.Error(err))
 		utils.FailWithMessage("失败", c)
@@ -144,6 +144,45 @@ func AssignMenuToRole(c *gin.Context) {
 	err = service.AssignMenuToRole(roleId, menuIds)
 	if err != nil {
 		global.OPS_LOGGER.Error("分配角色菜单失败:", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	utils.SuccessWithMessage("成功", c)
+}
+
+func GetRoleApis(c *gin.Context) {
+	roleId, err := getRoleIdFromParam(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取roleId失败:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	res, err := service.GetRoleApis(roleId)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取角色api失败:", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	utils.SuccessWithDetailed(res, "获取成功", c)
+}
+
+func AssignApiToRole(c *gin.Context) {
+	roleId, err := getRoleIdFromParam(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取roleId失败:", zap.Error(err))
+		utils.FailWithMessage("失败", c)
+		return
+	}
+	var apiIds []uint
+	err = c.ShouldBindJSON(&apiIds)
+	if err != nil {
+		global.OPS_LOGGER.Error("更新角色参数异常", zap.Error(err))
+		utils.FailWithMessage("更新角色参数异常", c)
+		return
+	}
+	err = service.AssignApiToRole(roleId, apiIds)
+	if err != nil {
+		global.OPS_LOGGER.Error("分配角色api失败:", zap.Error(err))
 		utils.FailWithMessage("失败", c)
 		return
 	}
