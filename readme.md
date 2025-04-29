@@ -1,19 +1,13 @@
-# 函数和类型注释
+# 项目介绍
 
-1. 安装Goomment插件
+基于 GIN + GORM + Casbin 的后台框架。当时想使用[vue3-element-admin-js](https://gitee.com/youlaiorg/vue3-element-admin-js)前端模板，但是没找到go后端，故自己参考接口文档实现go后端。在开发中由于URI冲突问题，对字典项路由地址进行了修改。目前仅支持PostgreSQL数据库。
 
-2. Ctrl+Shift+p打开user的setting.json文件
-setting.json文件中添加如下两行
+# 项目二次开发
+
+
+## 启动
+```shell
+go run main.go
 ```
-"functionTemplate": "// ${func_name} \n//\t@param ${param_type} \n//\t@return ${return_type} \n//  @author ${git_name} \n//  @date ${date}",
-"typeTemplate": "// ${type_name} \n//  @author ${git_name} \n//  @date ${date}"
-```
 
-3. 使用
-control + command + / (For windows: control + alt + /)
-
-# 问题
-
-## cannot use myvalidator.ValidateDateFormat (value of type func(fl "github.com/go-playground/validator".FieldLevel) bool) as "github.com/go-playground/validator/v10".Func value in argument to validate.RegisterValidationcompilerIncompatibleAssign
-
-validate.RegisterValidation 方法期望的参数类型是 github.com/go-playground/validator/v10.Func，但你传入的 myvalidator.ValidateDateFormat 函数类型为 func(fl "github.com/go-playground/validator".FieldLevel) bool。这可能是因为包版本不一致或者导入路径不同所导致的。
+## 导入sql文件
