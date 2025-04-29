@@ -58,7 +58,7 @@ func GetMenuRouteTree(userId uint) (menus []*response.MenuRouteRes, err error) {
 	var roleIds []uint
 	var rootFlag bool = false
 	for _, v := range user.Roles {
-		if v.Code == "ROOT" {
+		if v.Code == global.SUPER_ADMIN_ROLE {
 			rootFlag = true
 			break
 		}
