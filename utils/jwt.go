@@ -24,6 +24,7 @@ type MyCustomClaims struct {
 	UserID   uint
 	Username string
 	Nickname string
+	RoleIds  []uint
 	jwt.RegisteredClaims
 }
 
@@ -55,6 +56,9 @@ func GenerateTokenUsingHs256(user *models.SysUser) (token string, claims MyCusto
 			IssuedAt:  jwt.NewNumericDate(time.Now()),                        // 签发时间
 			ID:        randStr(10),                                           // wt ID, 类似于盐值
 		},
+	}
+	for _, v := range user.Roles {
+		claims.RoleIds = append(claims.RoleIds, v.ID)
 	}
 	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(sign_key))
 	return
@@ -101,5 +105,14 @@ func GetUserID(c *gin.Context) (uint, error) {
 	} else {
 		waitUse := claims.(*MyCustomClaims)
 		return waitUse.UserID, nil
+	}
+}
+
+func GetUserRoleIds(c *gin.Context) ([]uint, error) {
+	if claims, exists := c.Get("claims"); !exists {
+		return nil, errors.New("从上下文获取用户信息失败")
+	} else {
+		waitUse := claims.(*MyCustomClaims)
+		return waitUse.RoleIds, nil
 	}
 }

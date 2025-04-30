@@ -83,7 +83,7 @@ func (c *casbinHandler) init() error {
 			// 获取用户名
 			username := arguments[0].(string)
 			// 检查用户名的角色是否为超级管理员
-			return c.syncedCachedEnforcer.HasRoleForUser(username, global.SUPER_ADMIN_ROLE)
+			return c.syncedCachedEnforcer.HasRoleForUser(username, c.MakeRoleName(global.SUPER_ADMIN_ROLE_ID))
 		})
 		c.syncedCachedEnforcer.SetExpireTime(60 * 60)
 		err = c.syncedCachedEnforcer.LoadPolicy()
@@ -101,6 +101,14 @@ func (c *casbinHandler) Enforce(user, uri, action string) (bool, error) {
 	result, err := c.syncedCachedEnforcer.Enforce(user, uri, action)
 	if err != nil {
 		c.logger.Error("Enforce 执行失败!", zap.String("user", user), zap.String("uri", uri), zap.String("action", action), zap.Error(err))
+	}
+	return result, err
+}
+
+func (c *casbinHandler) EnforceRole(roleId uint, uri, action string) (bool, error) {
+	result, err := c.syncedCachedEnforcer.Enforce(c.MakeRoleName(roleId), uri, action)
+	if err != nil {
+		c.logger.Error("Enforce 执行失败!", zap.String("roleId", c.MakeRoleName(roleId)), zap.String("uri", uri), zap.String("action", action), zap.Error(err))
 	}
 	return result, err
 }
