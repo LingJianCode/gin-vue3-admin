@@ -4,6 +4,7 @@ import (
 	"errors"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
+	mycasbin "my-ops-admin/pkg/my_casbin"
 	"my-ops-admin/request"
 	"my-ops-admin/response"
 
@@ -145,6 +146,24 @@ func AssignApiToRole(roleId uint, apiIds []uint) error {
 			})
 		}
 		role.Apis = apis
-		return tx.Save(&role).Error
+		err = tx.Save(&role).Error
+		if err != nil {
+			return err
+		}
+		// casbin
+		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
+		if err != nil {
+			return err
+		}
+		var apiUriList, apiMethodList []string
+		for _, v := range apis {
+			apiUriList = append(apiUriList, v.Uri)
+			apiMethodList = append(apiMethodList, v.Method)
+		}
+		ok, err := casbin.AddRolePolicies(roleId, apiUriList, apiMethodList)
+		if !ok {
+			return errors.New("casbin fasle")
+		}
+		return err
 	})
 }

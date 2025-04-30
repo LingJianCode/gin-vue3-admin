@@ -4,6 +4,7 @@ import (
 	"errors"
 	"my-ops-admin/global"
 	"my-ops-admin/models"
+	mycasbin "my-ops-admin/pkg/my_casbin"
 	"my-ops-admin/request"
 	"my-ops-admin/response"
 	"my-ops-admin/utils"
@@ -12,15 +13,41 @@ import (
 	"gorm.io/gorm"
 )
 
+// CreateUser 这里应该使用事务？
+//
+//	@param models.SysUser
+//	@return error
+//	@author lingjian
+//	@date 2025-04-30 15:05:01
 func CreateUser(u models.SysUser) error {
-	var user models.SysUser
-	// 这里感觉写的有问题，应该所有错误都返回
-	if !errors.Is(global.OPS_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
-		return errors.New("用户名已注册")
-	}
-	u.Password = utils.BcryptHash(u.Password)
-	return global.OPS_DB.Create(&u).Error
-
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		var user models.SysUser
+		// 这里感觉写的有问题，应该所有错误都返回
+		if !errors.Is(tx.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
+			return errors.New("用户名已注册")
+		}
+		u.Password = utils.BcryptHash(u.Password)
+		err := tx.Create(&u).Error
+		if err != nil {
+			return err
+		}
+		// casbin处理
+		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
+		if err != nil {
+			return err
+		}
+		var userList []string
+		var roleIds []uint
+		for _, v := range u.Roles {
+			userList = append(userList, u.Username)
+			roleIds = append(roleIds, v.ID)
+		}
+		ok, err := casbin.AddUserRoles(userList, roleIds)
+		if !ok {
+			return errors.New("casbin fasle")
+		}
+		return err
+	})
 }
 
 func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
@@ -212,11 +239,59 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 			user.Roles = append(user.Roles, models.SysRole{OPS_MODEL: global.OPS_MODEL{ID: v}})
 		}
 		// 更新
-		return tx.Save(&user).Error
+		err = tx.Save(&user).Error
+		if err != nil {
+			return err
+		}
+		// casbin处理
+		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
+		if err != nil {
+			return err
+		}
+		// 删除
+		ok, err := casbin.DeleteUserRole(user.Username)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return errors.New("casbin fasle")
+		}
+		// 重新添加
+		var userList []string
+		var roleIds []uint
+		for _, v := range user.Roles {
+			userList = append(userList, user.Username)
+			roleIds = append(roleIds, v.ID)
+		}
+		ok, err = casbin.AddUserRoles(userList, roleIds)
+		if !ok {
+			return errors.New("casbin fasle")
+		}
+		return err
 	})
 }
 
 func DeleteUserById(id uint) error {
-	// 要不要删除关联角色信息
-	return global.OPS_DB.Delete(&models.SysUser{}, id).Error
+	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
+		var u models.SysUser
+		err := tx.Delete(&u, id).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Where("sys_user_id = ?", id).Delete(&models.SysUserRole{}).Error
+		if err != nil {
+			return err
+		}
+		// casbin处理
+		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
+		if err != nil {
+			return err
+		}
+		// 删除
+		ok, err := casbin.DeleteUserRole(u.Username)
+		if !ok {
+			return errors.New("casbin fasle")
+		}
+		return err
+	})
 }
