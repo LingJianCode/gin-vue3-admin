@@ -13,7 +13,6 @@ import (
 )
 
 func CreateUser(u models.SysUser) error {
-	// 这里后面需要改成事务操作
 	var user models.SysUser
 	// 这里感觉写的有问题，应该所有错误都返回
 	if !errors.Is(global.OPS_DB.Where("username = ?", u.Username).First(&user).Error, gorm.ErrRecordNotFound) {
@@ -21,6 +20,7 @@ func CreateUser(u models.SysUser) error {
 	}
 	u.Password = utils.BcryptHash(u.Password)
 	return global.OPS_DB.Create(&u).Error
+
 }
 
 func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
@@ -181,6 +181,13 @@ func ResetUserPassword(id uint, password string) error {
 	return global.OPS_DB.Save(&user).Error
 }
 
+// UpdateUserInfo 更新用户角色时，还需要对casbin进行处理
+//
+//	@param uint
+//	@param request.UserInfo
+//	@return error
+//	@author lingjian
+//	@date 2025-04-30 11:19:27
 func UpdateUserInfo(id uint, ui request.UserInfo) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var user models.SysUser
@@ -191,7 +198,7 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 
 		// 删除用户关联角色
 		tx.Where("sys_user_id = ?", id).Delete(&models.SysUserRole{})
-		// 更新
+
 		user.Avatar = ui.Avatar
 		user.DeptID = ui.DeptID
 		user.Email = ui.Email
@@ -204,6 +211,7 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 		for _, v := range ui.RoleIDS {
 			user.Roles = append(user.Roles, models.SysRole{OPS_MODEL: global.OPS_MODEL{ID: v}})
 		}
+		// 更新
 		return tx.Save(&user).Error
 	})
 }
