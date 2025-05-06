@@ -151,9 +151,12 @@ func AssignApiToRole(roleId uint, apiIds []uint) error {
 			return err
 		}
 		// casbin
-
+		err = tx.Order("sort").Preload("Apis").First(&role, roleId).Error
+		if err != nil {
+			return err
+		}
 		var apiUriList, apiMethodList []string
-		for _, v := range apis {
+		for _, v := range role.Apis {
 			apiUriList = append(apiUriList, v.Uri)
 			apiMethodList = append(apiMethodList, v.Method)
 		}

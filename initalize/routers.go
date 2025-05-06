@@ -18,8 +18,7 @@ func Routers() *gin.Engine {
 	{
 		public := api.Group("/v1")
 		private := api.Group("/v1")
-		// private.Use(middleware.JwtAuthHandler()).Use(middleware.CasbinHandler())
-		private.Use(middleware.JwtAuthHandler())
+		private.Use(middleware.JwtAuthHandler()).Use(middleware.CasbinHandler())
 		{
 			routers.InitAuthRoutes(public, private)
 

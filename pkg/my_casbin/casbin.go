@@ -29,30 +29,14 @@ type casbinHandler struct {
 	logger               *zap.Logger
 }
 
-// NewCasbinHandler 通过依赖注入的方式创建 casbinHandler 实例
-// func NewCasbinHandler(db *gorm.DB, logger *zap.Logger) (*casbinHandler, error) {
-// 	c := &casbinHandler{
-// 		db:     db,
-// 		logger: logger,
-// 	}
-// 	err := c.init()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return c, nil
-// }
-
-func (c *casbinHandler) InitCasbin() error {
-	var initErr error
+func (c *casbinHandler) InitCasbin() {
 	once.Do(func() {
 		c.db = global.OPS_DB
 		c.logger = global.OPS_LOGGER
 
 		a, err := gormadapter.NewAdapterByDB(c.db)
 		if err != nil {
-			c.logger.Error("casbin数据库初始化失败!", zap.Error(err))
-			initErr = err
-			return
+			panic(fmt.Sprintln("casbin数据库初始化失败!", err.Error()))
 		}
 
 		text := `
@@ -73,14 +57,11 @@ func (c *casbinHandler) InitCasbin() error {
 		`
 		m, err := model.NewModelFromString(text)
 		if err != nil {
-			global.OPS_LOGGER.Error("字符串加载模型失败!", zap.Error(err))
-			return
+			panic(fmt.Sprintln("字符串加载模型失败!", err.Error()))
 		}
 		c.syncedCachedEnforcer, err = casbin.NewSyncedCachedEnforcer(m, a)
 		if err != nil {
-			c.logger.Error("NewSyncedCachedEnforcer失败!", zap.Error(err))
-			initErr = err
-			return
+			panic(fmt.Sprintln("NewSyncedCachedEnforcer失败!", err.Error()))
 		}
 		c.syncedCachedEnforcer.AddFunction("isSuperAdmin", func(arguments ...interface{}) (interface{}, error) {
 			// 获取用户名
@@ -91,11 +72,9 @@ func (c *casbinHandler) InitCasbin() error {
 		c.syncedCachedEnforcer.SetExpireTime(60 * 60)
 		err = c.syncedCachedEnforcer.LoadPolicy()
 		if err != nil {
-			c.logger.Error("LoadPolicy失败!", zap.Error(err))
-			initErr = err
+			panic(fmt.Sprintln("LoadPolicy失败!", err.Error()))
 		}
 	})
-	return initErr
 }
 
 // Enforce 校验权限
