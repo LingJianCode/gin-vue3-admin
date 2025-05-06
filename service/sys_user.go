@@ -32,17 +32,14 @@ func CreateUser(u models.SysUser) error {
 			return err
 		}
 		// casbin处理
-		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
-		if err != nil {
-			return err
-		}
+
 		var userList []string
 		var roleIds []uint
 		for _, v := range u.Roles {
 			userList = append(userList, u.Username)
 			roleIds = append(roleIds, v.ID)
 		}
-		ok, err := casbin.AddUserRoles(userList, roleIds)
+		ok, err := mycasbin.Casbin.AddUserRoles(userList, roleIds)
 		if !ok {
 			return errors.New("casbin fasle")
 		}
@@ -244,17 +241,11 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 			return err
 		}
 		// casbin处理
-		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
-		if err != nil {
-			return err
-		}
+
 		// 删除
-		ok, err := casbin.DeleteUserRole(user.Username)
+		_, err = mycasbin.Casbin.DeleteUserRole(user.Username)
 		if err != nil {
 			return err
-		}
-		if !ok {
-			return errors.New("casbin fasle")
 		}
 		// 重新添加
 		var userList []string
@@ -263,10 +254,7 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 			userList = append(userList, user.Username)
 			roleIds = append(roleIds, v.ID)
 		}
-		ok, err = casbin.AddUserRoles(userList, roleIds)
-		if !ok {
-			return errors.New("casbin fasle")
-		}
+		_, err = mycasbin.Casbin.AddUserRoles(userList, roleIds)
 		return err
 	})
 }
@@ -283,12 +271,9 @@ func DeleteUserById(id uint) error {
 			return err
 		}
 		// casbin处理
-		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
-		if err != nil {
-			return err
-		}
+
 		// 删除
-		ok, err := casbin.DeleteUserRole(u.Username)
+		ok, err := mycasbin.Casbin.DeleteUserRole(u.Username)
 		if !ok {
 			return errors.New("casbin fasle")
 		}

@@ -14,7 +14,7 @@ import (
 
 var (
 	once   sync.Once
-	Casbin *casbinHandler
+	Casbin = new(casbinHandler)
 )
 
 // 定义常量提高代码可读性
@@ -30,21 +30,24 @@ type casbinHandler struct {
 }
 
 // NewCasbinHandler 通过依赖注入的方式创建 casbinHandler 实例
-func NewCasbinHandler(db *gorm.DB, logger *zap.Logger) (*casbinHandler, error) {
-	c := &casbinHandler{
-		db:     db,
-		logger: logger,
-	}
-	err := c.init()
-	if err != nil {
-		return nil, err
-	}
-	return c, nil
-}
+// func NewCasbinHandler(db *gorm.DB, logger *zap.Logger) (*casbinHandler, error) {
+// 	c := &casbinHandler{
+// 		db:     db,
+// 		logger: logger,
+// 	}
+// 	err := c.init()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return c, nil
+// }
 
-func (c *casbinHandler) init() error {
+func (c *casbinHandler) InitCasbin() error {
 	var initErr error
 	once.Do(func() {
+		c.db = global.OPS_DB
+		c.logger = global.OPS_LOGGER
+
 		a, err := gormadapter.NewAdapterByDB(c.db)
 		if err != nil {
 			c.logger.Error("casbin数据库初始化失败!", zap.Error(err))
@@ -90,7 +93,6 @@ func (c *casbinHandler) init() error {
 		if err != nil {
 			c.logger.Error("LoadPolicy失败!", zap.Error(err))
 			initErr = err
-			return
 		}
 	})
 	return initErr
@@ -226,6 +228,14 @@ func (c *casbinHandler) AddUserRoles(usernames []string, roleIds []uint) (bool, 
 
 // DeleteUserRole 删除用户的角色信息
 func (c *casbinHandler) DeleteUserRole(user string) (bool, error) {
+	ok, err := c.syncedCachedEnforcer.HasNamedGroupingPolicy(PolicyTypeGrouping, user)
+	if err != nil {
+		c.logger.Error("DeleteUserRole HasNamedGroupingPolicy 执行失败!", zap.String("user", user), zap.Error(err))
+		return false, err
+	}
+	if !ok {
+		return true, nil
+	}
 	result, err := c.syncedCachedEnforcer.RemoveFilteredNamedGroupingPolicy(PolicyTypeGrouping, 0, user)
 	if err == nil && result {
 		c.syncedCachedEnforcer.LoadPolicy() //清楚缓存并重新加载策略

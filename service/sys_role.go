@@ -151,19 +151,13 @@ func AssignApiToRole(roleId uint, apiIds []uint) error {
 			return err
 		}
 		// casbin
-		casbin, err := mycasbin.NewCasbinHandler(tx, global.OPS_LOGGER)
-		if err != nil {
-			return err
-		}
+
 		var apiUriList, apiMethodList []string
 		for _, v := range apis {
 			apiUriList = append(apiUriList, v.Uri)
 			apiMethodList = append(apiMethodList, v.Method)
 		}
-		ok, err := casbin.AddRolePolicies(roleId, apiUriList, apiMethodList)
-		if !ok {
-			return errors.New("casbin fasle")
-		}
+		_, err = mycasbin.Casbin.AddRolePolicies(roleId, apiUriList, apiMethodList)
 		return err
 	})
 }

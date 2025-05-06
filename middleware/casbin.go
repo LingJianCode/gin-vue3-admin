@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"my-ops-admin/global"
 	mycasbin "my-ops-admin/pkg/my_casbin"
 	"my-ops-admin/utils"
 
@@ -11,19 +10,14 @@ import (
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		roleIds, _ := utils.GetUserRoleIds(c)
-		//获取请求的PATH
-		obj := c.Request.URL.Path
+		//获取请求匹配的路由uri
+		obj := c.FullPath()
 		// 获取请求方法
 		act := c.Request.Method
-		casbin, err := mycasbin.NewCasbinHandler(global.OPS_DB, global.OPS_LOGGER)
-		if err != nil {
-			utils.FailWithDetailed(gin.H{}, err.Error(), c)
-			c.Abort()
-			return
-		}
+
 		var ok bool = false
 		for _, sub := range roleIds {
-			ok, _ = casbin.EnforceRole(sub, obj, act)
+			ok, _ = mycasbin.Casbin.EnforceRole(sub, obj, act)
 			if ok {
 				break
 			}
