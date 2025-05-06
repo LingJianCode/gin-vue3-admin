@@ -23,7 +23,7 @@ func CasbinHandler() gin.HandlerFunc {
 			}
 		}
 		if !ok {
-			utils.FailWithDetailed(gin.H{}, "权限不足", c)
+			utils.FailWithDetailed(gin.H{}, "API权限不足", c)
 			c.Abort()
 			return
 		}

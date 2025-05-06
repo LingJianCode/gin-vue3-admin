@@ -3,6 +3,7 @@ package mycasbin
 import (
 	"fmt"
 	"my-ops-admin/global"
+	"strings"
 	"sync"
 
 	"github.com/casbin/casbin/v2"
@@ -53,7 +54,7 @@ func (c *casbinHandler) InitCasbin() {
 		e = some(where (p.eft == allow))
 		
 		[matchers]
-		m = g(r.sub, p.sub) && keyMatch2(r.obj,p.obj) && r.act == p.act || isSuperAdmin(r.sub)
+		m = g(r.sub, p.sub) && keyMatch2(r.obj==p.obj) && r.act == p.act || isSuperAdmin(r.sub)
 		`
 		m, err := model.NewModelFromString(text)
 		if err != nil {
@@ -64,10 +65,16 @@ func (c *casbinHandler) InitCasbin() {
 			panic(fmt.Sprintln("NewSyncedCachedEnforcer失败!", err.Error()))
 		}
 		c.syncedCachedEnforcer.AddFunction("isSuperAdmin", func(arguments ...interface{}) (interface{}, error) {
-			// 获取用户名
-			username := arguments[0].(string)
-			// 检查用户名的角色是否为超级管理员
-			return c.syncedCachedEnforcer.HasRoleForUser(username, c.MakeRoleName(global.SUPER_ADMIN_ROLE_ID))
+			// 获取用户名，由于使用了g导致传入参数变成了角色
+			arg_0 := arguments[0].(string)
+			if strings.HasPrefix(arg_0, "role_") {
+				// 检查角色是否为超级管理员
+				return arg_0 == c.MakeRoleName(global.SUPER_ADMIN_ROLE_ID), nil
+			} else {
+				// 检查用户名的角色是否为超级管理员
+				return c.syncedCachedEnforcer.HasRoleForUser(arg_0, c.MakeRoleName(global.SUPER_ADMIN_ROLE_ID))
+			}
+
 		})
 		c.syncedCachedEnforcer.SetExpireTime(60 * 60)
 		err = c.syncedCachedEnforcer.LoadPolicy()
