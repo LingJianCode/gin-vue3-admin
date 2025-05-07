@@ -54,7 +54,7 @@ func (c *casbinHandler) InitCasbin() {
 		e = some(where (p.eft == allow))
 		
 		[matchers]
-		m = g(r.sub, p.sub) && keyMatch2(r.obj==p.obj) && r.act == p.act || isSuperAdmin(r.sub)
+		m = g(r.sub, p.sub) && keyMatch2(r.obj,p.obj) && r.act == p.act || isSuperAdmin(r.sub)
 		`
 		m, err := model.NewModelFromString(text)
 		if err != nil {
