@@ -11,3 +11,6 @@ go run main.go
 ```
 
 ## 导入sql文件
+```shell
+sudo -u postgres psql -d mypg -f ./sql/my-ops-admin-format-p.sql
+```
