@@ -139,11 +139,20 @@ func AssignApiToRole(roleId uint, apiIds []uint) error {
 		if err != nil {
 			return err
 		}
+		_, err = mycasbin.Casbin.DeleteRolePolicy(role.ID)
+		if err != nil {
+			return err
+		}
+		if len(apiIds) == 0 {
+			return nil
+		}
 		var apis []models.SysApi
 		for _, v := range apiIds {
-			apis = append(apis, models.SysApi{
-				OPS_MODEL: global.OPS_MODEL{ID: v},
-			})
+			if v != 0 {
+				apis = append(apis, models.SysApi{
+					OPS_MODEL: global.OPS_MODEL{ID: v},
+				})
+			}
 		}
 		role.Apis = apis
 		err = tx.Save(&role).Error
