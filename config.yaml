@@ -7,7 +7,7 @@ postgresql:
   username: "mypg"
   password: "Make@2025"
   dbname: "mypg"
-  schema: "mypg"
+  schema: "mypg2"
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: ""
