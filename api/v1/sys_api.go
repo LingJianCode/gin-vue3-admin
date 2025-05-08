@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var ApiApp = new(SysApiApi)
+var ApiApiApp = new(SysApiApi)
 
 type SysApiApi struct{}
 

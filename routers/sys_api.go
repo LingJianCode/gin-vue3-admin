@@ -9,6 +9,6 @@ import (
 func InitApiRoutes(private *gin.RouterGroup) {
 	privateAuthRouter := private.Group("/apis")
 	{
-		privateAuthRouter.GET("/options", v1.ApiApp.GetApiOptionsList)
+		privateAuthRouter.GET("/options", v1.ApiApiApp.GetApiOptionsList)
 	}
 }
