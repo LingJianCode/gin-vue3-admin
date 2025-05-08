@@ -7,7 +7,11 @@ import (
 	"my-ops-admin/utils"
 )
 
-func Login(u *models.SysUser) (*models.SysUser, error) {
+var AuthServiceApp = new(SysAuthService)
+
+type SysAuthService struct{}
+
+func (a *SysAuthService) Login(u *models.SysUser) (*models.SysUser, error) {
 	var user models.SysUser
 	err := global.OPS_DB.Preload("Roles").Where("username = ?", u.Username).First(&user).Error
 	if err == nil {

@@ -12,6 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
+var DictApiApp = new(SysDictApi)
+
+type SysDictApi struct{}
+
 func getDictIdFromParam(c *gin.Context) (uint, error) {
 	dictId := c.Param("dictId")
 	if dictId == "" {
@@ -24,8 +28,8 @@ func getDictIdFromParam(c *gin.Context) (uint, error) {
 	return uint(id), nil
 }
 
-func GetDicts(c *gin.Context) {}
-func GetDictsPagination(c *gin.Context) {
+func (a *SysDictApi) GetDicts(c *gin.Context) {}
+func (a *SysDictApi) GetDictsPagination(c *gin.Context) {
 	var dpi request.DictPaginationInfo
 	err := c.ShouldBindQuery(&dpi)
 	if err != nil {
@@ -33,7 +37,7 @@ func GetDictsPagination(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictPagination(dpi)
+	res, err := service.DictServiceApp.GetDictPagination(dpi)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取字典分页列表出错:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -41,15 +45,15 @@ func GetDictsPagination(c *gin.Context) {
 	}
 	utils.SuccessWithDetailed(res, "获取成功", c)
 }
-func CreateDict(c *gin.Context) {}
-func GetDictForm(c *gin.Context) {
+func (a *SysDictApi) CreateDict(c *gin.Context) {}
+func (a *SysDictApi) GetDictForm(c *gin.Context) {
 	dictId, err := getDictIdFromParam(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取dictId失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictForm(dictId)
+	res, err := service.DictServiceApp.GetDictForm(dictId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取dict信息失败:", zap.Error(err))
 		utils.FailWithMessage("失败:", c)
@@ -57,8 +61,8 @@ func GetDictForm(c *gin.Context) {
 	}
 	utils.SuccessWithDetailed(res, "获取成功", c)
 }
-func UpdateDict(c *gin.Context) {}
-func DeleteDict(c *gin.Context) {}
+func (a *SysDictApi) UpdateDict(c *gin.Context) {}
+func (a *SysDictApi) DeleteDict(c *gin.Context) {}
 
 func getDictCodeFromParam(c *gin.Context) (string, error) {
 	dictCode := c.Param("dictCode")
@@ -82,7 +86,7 @@ func GetDictItemListPagination(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictItemListPagination(dictCode, dipi)
+	res, err := service.DictItemServiceApp.GetDictItemListPagination(dictCode, dipi)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取字典项分页列表出错:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -98,7 +102,7 @@ func GetDictItemList(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictItemList(dictCode)
+	res, err := service.DictItemServiceApp.GetDictItemList(dictCode)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -122,7 +126,7 @@ func GetDictItemForm(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetDictItemForm(dictCode, itemId)
+	res, err := service.DictItemServiceApp.GetDictItemForm(dictCode, itemId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

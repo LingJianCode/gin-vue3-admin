@@ -9,14 +9,14 @@ import (
 func InitMenuRoutes(router *gin.RouterGroup) {
 	menuRouter := router.Group("/menus")
 	{
-		menuRouter.GET("", v1.GetMenusList)
-		menuRouter.POST("", v1.CreateMenu)
-		menuRouter.PUT("/:menuId", v1.UpdateMenu)
-		menuRouter.DELETE("/:menuId", v1.DeleteMenu)
-		menuRouter.GET("/:menuId/form", v1.GetMenuForm)
+		menuRouter.GET("", v1.MenuApiApp.GetMenusList)
+		menuRouter.POST("", v1.MenuApiApp.CreateMenu)
+		menuRouter.PUT("/:menuId", v1.MenuApiApp.UpdateMenu)
+		menuRouter.DELETE("/:menuId", v1.MenuApiApp.DeleteMenu)
+		menuRouter.GET("/:menuId/form", v1.MenuApiApp.GetMenuForm)
 	}
 	{
-		menuRouter.GET("/options", v1.GetMenuOptions)
-		menuRouter.GET("/routes", v1.GetMenuRoutes)
+		menuRouter.GET("/options", v1.MenuApiApp.GetMenuOptions)
+		menuRouter.GET("/routes", v1.MenuApiApp.GetMenuRoutes)
 	}
 }

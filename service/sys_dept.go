@@ -10,13 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
+var DeptServiceApp = new(SysDeptService)
+
+type SysDeptService struct{}
+
 // CreateDept
 //
 //	@param models.SysDept
 //	@return error
 //	@author lingjian
 //	@date 2025-04-24 17:56:15
-func CreateDept(d models.SysDept) error {
+func (a *SysDeptService) CreateDept(d models.SysDept) error {
 	var sd models.SysDept
 	if !errors.Is(global.OPS_DB.Where("code = ?", d.Code).First(&sd).Error, gorm.ErrRecordNotFound) {
 		return errors.New("部门编码已注册")
@@ -30,7 +34,7 @@ func CreateDept(d models.SysDept) error {
 //	@return error
 //	@author lingjian
 //	@date 2025-04-24 17:56:10
-func GetDeptTree() (deptTree []*response.DeptTreeRes, err error) {
+func (a *SysDeptService) GetDeptTree() (deptTree []*response.DeptTreeRes, err error) {
 	var deptList []*response.DeptTreeRes
 	err = global.OPS_DB.Find(&deptList).Error
 	if err != nil {
@@ -60,7 +64,7 @@ func buildDeptTree(deptTree []*response.DeptTreeRes, parentId uint) []*response.
 	return nodes
 }
 
-func GetDeptOptionsTree() (deptOptions []*response.DeptOption, err error) {
+func (a *SysDeptService) GetDeptOptionsTree() (deptOptions []*response.DeptOption, err error) {
 	var deptList []*models.SysDept
 	err = global.OPS_DB.Find(&deptList).Error
 	if err != nil {

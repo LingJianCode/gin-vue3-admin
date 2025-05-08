@@ -10,12 +10,12 @@ func InitDictRoutes(router *gin.RouterGroup) {
 	dictRouter := router.Group("/dicts")
 	// 字典
 	{
-		dictRouter.GET("", v1.GetDicts)
-		dictRouter.GET("/page", v1.GetDictsPagination)
-		dictRouter.POST("", v1.CreateDict)
-		dictRouter.GET("/:dictId/form", v1.GetDictForm)
-		dictRouter.PUT("/:dictId", v1.UpdateDict)
-		dictRouter.DELETE("/:dictId", v1.DeleteDict)
+		dictRouter.GET("", v1.DictApiApp.GetDicts)
+		dictRouter.GET("/page", v1.DictApiApp.GetDictsPagination)
+		dictRouter.POST("", v1.DictApiApp.CreateDict)
+		dictRouter.GET("/:dictId/form", v1.DictApiApp.GetDictForm)
+		dictRouter.PUT("/:dictId", v1.DictApiApp.UpdateDict)
+		dictRouter.DELETE("/:dictId", v1.DictApiApp.DeleteDict)
 	}
 	// 字典项
 	dictItemRouter := router.Group("/dict")

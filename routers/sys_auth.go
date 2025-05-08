@@ -9,11 +9,11 @@ import (
 func InitAuthRoutes(public *gin.RouterGroup, private *gin.RouterGroup) {
 	publicAuthRouter := public.Group("/auth")
 	{
-		publicAuthRouter.GET("/captcha", v1.Captcha)
-		publicAuthRouter.POST("/login", v1.Login)
+		publicAuthRouter.GET("/captcha", v1.AuthApiApp.Captcha)
+		publicAuthRouter.POST("/login", v1.AuthApiApp.Login)
 	}
 	privateAuthRouter := private.Group("/auth")
 	{
-		privateAuthRouter.DELETE("/logout", v1.Logout)
+		privateAuthRouter.DELETE("/logout", v1.AuthApiApp.Logout)
 	}
 }

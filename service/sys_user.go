@@ -13,13 +13,17 @@ import (
 	"gorm.io/gorm"
 )
 
+var UserServiceApp = new(SysUserService)
+
+type SysUserService struct{}
+
 // CreateUser 这里应该使用事务？
 //
 //	@param models.SysUser
 //	@return error
 //	@author lingjian
 //	@date 2025-04-30 15:05:01
-func CreateUser(u models.SysUser) error {
+func (a *SysUserService) CreateUser(u models.SysUser) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var user models.SysUser
 		// 这里感觉写的有问题，应该所有错误都返回
@@ -47,7 +51,7 @@ func CreateUser(u models.SysUser) error {
 	})
 }
 
-func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
+func (a *SysUserService) GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 	var user models.SysUser
 	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
 	if err != nil {
@@ -107,7 +111,7 @@ func GetCurrentUserInfoByID(id uint) (cu response.CurrentUser, err error) {
 	return
 }
 
-func GetUserListPagination(upi request.UserPaginationInfo) (ulp response.UserListPagination, err error) {
+func (a *SysUserService) GetUserListPagination(upi request.UserPaginationInfo) (ulp response.UserListPagination, err error) {
 	var userList []models.SysUser
 	db := global.OPS_DB.Model(&models.SysUser{})
 	limit := upi.PageSize
@@ -171,7 +175,7 @@ func GetUserListPagination(upi request.UserPaginationInfo) (ulp response.UserLis
 	return
 }
 
-func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
+func (a *SysUserService) GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
 	var user models.SysUser
 	err = global.OPS_DB.Preload("Roles").First(&user, id).Error
 	if err != nil {
@@ -195,7 +199,7 @@ func GetUserInfoFormById(id uint) (uf response.UserForm, err error) {
 	return
 }
 
-func ResetUserPassword(id uint, password string) error {
+func (a *SysUserService) ResetUserPassword(id uint, password string) error {
 	var user models.SysUser
 	err := global.OPS_DB.First(&user, id).Error
 	if err != nil {
@@ -212,7 +216,7 @@ func ResetUserPassword(id uint, password string) error {
 //	@return error
 //	@author lingjian
 //	@date 2025-04-30 11:19:27
-func UpdateUserInfo(id uint, ui request.UserInfo) error {
+func (a *SysUserService) UpdateUserInfo(id uint, ui request.UserInfo) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var user models.SysUser
 		err := tx.First(&user, id).Error
@@ -259,7 +263,7 @@ func UpdateUserInfo(id uint, ui request.UserInfo) error {
 	})
 }
 
-func DeleteUserById(id uint) error {
+func (a *SysUserService) DeleteUserById(id uint) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var u models.SysUser
 		err := tx.Delete(&u, id).Error

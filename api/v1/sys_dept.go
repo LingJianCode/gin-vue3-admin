@@ -11,7 +11,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func CreateDept(c *gin.Context) {
+var DeptApiApp = new(SysDeptApi)
+
+type SysDeptApi struct{}
+
+func (a *SysDeptApi) CreateDept(c *gin.Context) {
 	var cd request.CreateDept
 	err := c.ShouldBindJSON(&cd)
 	if err != nil {
@@ -25,7 +29,7 @@ func CreateDept(c *gin.Context) {
 		ParentID: cd.ParentID,
 		Sort:     cd.Sort,
 	}
-	err = service.CreateDept(*d)
+	err = service.DeptServiceApp.CreateDept(*d)
 	if err != nil {
 		global.OPS_LOGGER.Error("创建部门异常", zap.Error(err))
 		utils.FailWithMessage(err.Error(), c)
@@ -34,8 +38,8 @@ func CreateDept(c *gin.Context) {
 	utils.SuccessWithMessage("创建部门成功", c)
 }
 
-func GetDeptTree(c *gin.Context) {
-	dept, err := service.GetDeptTree()
+func (a *SysDeptApi) GetDeptTree(c *gin.Context) {
+	dept, err := service.DeptServiceApp.GetDeptTree()
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -45,8 +49,8 @@ func GetDeptTree(c *gin.Context) {
 	utils.SuccessWithDetailed(dept, "获取成功", c)
 }
 
-func GetDeptOptions(c *gin.Context) {
-	deptOptions, err := service.GetDeptOptionsTree()
+func (a *SysDeptApi) GetDeptOptions(c *gin.Context) {
+	deptOptions, err := service.DeptServiceApp.GetDeptOptionsTree()
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

@@ -7,7 +7,11 @@ import (
 	"my-ops-admin/response"
 )
 
-func GetDictPagination(dpi request.DictPaginationInfo) (dictPageRes response.DictPaginationRes, err error) {
+var DictServiceApp = new(SysDictService)
+
+type SysDictService struct{}
+
+func (a *SysDictService) GetDictPagination(dpi request.DictPaginationInfo) (dictPageRes response.DictPaginationRes, err error) {
 	db := global.OPS_DB.Model(&models.SysDict{})
 	limit := dpi.PageSize
 	offset := dpi.PageSize * (dpi.PageNum - 1)
@@ -22,7 +26,7 @@ func GetDictPagination(dpi request.DictPaginationInfo) (dictPageRes response.Dic
 	return
 }
 
-func GetDictForm(id uint) (dict models.SysDict, err error) {
+func (a *SysDictService) GetDictForm(id uint) (dict models.SysDict, err error) {
 	err = global.OPS_DB.First(&dict, id).Error
 	return
 }
