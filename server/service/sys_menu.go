@@ -12,7 +12,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateMenu(menu models.SysMenu) error {
+var MenuServiceApp = new(SysMenuService)
+
+type SysMenuService struct{}
+
+func (a *SysMenuService) CreateMenu(menu models.SysMenu) error {
 	// 这里感觉写的有问题，应该所有错误都返回
 	if !errors.Is(global.OPS_DB.Where("name = ?", menu.Name).First(&models.SysMenu{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在重复name，请修改name")
@@ -20,7 +24,7 @@ func CreateMenu(menu models.SysMenu) error {
 	return global.OPS_DB.Create(&menu).Error
 }
 
-func GetMenuTree() (menus []*response.MenuTreeRes, err error) {
+func (a *SysMenuService) GetMenuTree() (menus []*response.MenuTreeRes, err error) {
 	var treeMenu []*response.MenuTreeRes
 	err = global.OPS_DB.Model(&models.SysMenu{}).Order("sort").Preload("Params").Find(&treeMenu).Error
 	if err != nil {
@@ -49,7 +53,7 @@ func getChildrenList(menus []*response.MenuTreeRes, parentId uint) []*response.M
 	return nodes
 }
 
-func GetMenuRouteTree(userId uint) (menus []*response.MenuRouteRes, err error) {
+func (a *SysMenuService) GetMenuRouteTree(userId uint) (menus []*response.MenuRouteRes, err error) {
 	var user models.SysUser
 	err = global.OPS_DB.Preload("Roles").First(&user, userId).Error
 	if err != nil {
@@ -132,7 +136,7 @@ func buildMenuRoute(menuList []*models.SysMenu, parentId uint) []*response.MenuR
 	return res
 }
 
-func GetMenuOptions(onlyParent bool) (menuOptions []*response.MenuOption, err error) {
+func (a *SysMenuService) GetMenuOptions(onlyParent bool) (menuOptions []*response.MenuOption, err error) {
 	var menuList []*models.SysMenu
 	if onlyParent {
 		err = global.OPS_DB.Where("type in ?", []interface{}{models.SYS_MENU_TYPE_CATALOG, models.SYS_MENU_TYPE_MENU}).Order("sort").Find(&menuList).Error
@@ -163,7 +167,7 @@ func buildMenuOptions(menuList []*models.SysMenu, parentId uint) []*response.Men
 	return nodes
 }
 
-func UpdateMenu(id uint, menuReq request.MenuInfo) error {
+func (a *SysMenuService) UpdateMenu(id uint, menuReq request.MenuInfo) error {
 	var menu models.SysMenu
 	if errors.Is(global.OPS_DB.First(&menu, id).Error, gorm.ErrRecordNotFound) {
 		return errors.New("记录不存在")
@@ -191,11 +195,11 @@ func UpdateMenu(id uint, menuReq request.MenuInfo) error {
 //	@return error
 //	@author lingjian
 //	@date 2025-04-28 11:02:41
-func DeleteMenu(id uint) error {
+func (a *SysMenuService) DeleteMenu(id uint) error {
 	return global.OPS_DB.Delete(&models.SysMenu{}, id).Error
 }
 
-func GetMenuForm(id uint) (menu models.SysMenu, err error) {
+func (a *SysMenuService) GetMenuForm(id uint) (menu models.SysMenu, err error) {
 	if errors.Is(global.OPS_DB.Preload("Params").First(&menu, id).Error, gorm.ErrRecordNotFound) {
 		err = errors.New("记录不存在")
 		return

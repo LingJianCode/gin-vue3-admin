@@ -9,8 +9,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetApiOptionsList(c *gin.Context) {
-	apiOptions, err := service.GetApiOptions()
+var ApiApp = new(SysApiApi)
+
+type SysApiApi struct{}
+
+func (a *SysApiApi) GetApiOptionsList(c *gin.Context) {
+	apiOptions, err := service.ApiServiceApp.GetApiOptions()
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

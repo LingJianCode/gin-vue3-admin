@@ -6,7 +6,11 @@ import (
 	"my-ops-admin/response"
 )
 
-func GetApiOptions() (apiOptions []response.ApiOption, err error) {
+var ApiServiceApp = new(SysApiService)
+
+type SysApiService struct{}
+
+func (a *SysApiService) GetApiOptions() (apiOptions []response.ApiOption, err error) {
 	var apiList []models.SysApi
 	err = global.OPS_DB.Order("id").Find(&apiList).Error
 	apiMap := make(map[string][]models.SysApi)

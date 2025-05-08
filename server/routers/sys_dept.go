@@ -9,8 +9,8 @@ import (
 func InitDeptRoutes(router *gin.RouterGroup) {
 	deptRouter := router.Group("/dept")
 	{
-		deptRouter.GET("", v1.GetDeptTree)
-		deptRouter.POST("", v1.CreateDept)
-		deptRouter.GET("/options", v1.GetDeptOptions)
+		deptRouter.GET("", v1.DeptApiApp.GetDeptTree)
+		deptRouter.POST("", v1.DeptApiApp.CreateDept)
+		deptRouter.GET("/options", v1.DeptApiApp.GetDeptOptions)
 	}
 }

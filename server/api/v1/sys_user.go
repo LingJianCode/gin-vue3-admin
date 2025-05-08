@@ -13,6 +13,10 @@ import (
 	"go.uber.org/zap"
 )
 
+var UserApiApp = new(SysUserApi)
+
+type SysUserApi struct{}
+
 func getUserIdFromParam(c *gin.Context) (uint, error) {
 	userId := c.Param("userId")
 	if userId == "" {
@@ -25,7 +29,7 @@ func getUserIdFromParam(c *gin.Context) (uint, error) {
 	return uint(id), nil
 }
 
-func CreateUser(c *gin.Context) {
+func (a *SysUserApi) CreateUser(c *gin.Context) {
 	var cu request.UserInfo
 	err := c.ShouldBindJSON(&cu)
 	if err != nil {
@@ -55,7 +59,7 @@ func CreateUser(c *gin.Context) {
 		Roles:    roles,
 	}
 
-	err = service.CreateUser(*user)
+	err = service.UserServiceApp.CreateUser(*user)
 	if err != nil {
 		global.OPS_LOGGER.Error("创建用户异常", zap.Error(err))
 		utils.FailWithMessage(err.Error(), c)
@@ -64,14 +68,14 @@ func CreateUser(c *gin.Context) {
 	utils.SuccessWithMessage("注册成功", c)
 }
 
-func GetCurrentUserInfo(c *gin.Context) {
+func (a *SysUserApi) GetCurrentUserInfo(c *gin.Context) {
 	id, err := utils.GetUserID(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	ReqUser, err := service.GetCurrentUserInfoByID(id)
+	ReqUser, err := service.UserServiceApp.GetCurrentUserInfoByID(id)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -80,7 +84,7 @@ func GetCurrentUserInfo(c *gin.Context) {
 	utils.SuccessWithDetailed(ReqUser, "获取成功", c)
 }
 
-func GetUserListPagination(c *gin.Context) {
+func (a *SysUserApi) GetUserListPagination(c *gin.Context) {
 	var upi request.UserPaginationInfo
 	err := c.ShouldBindQuery(&upi)
 	if err != nil {
@@ -88,7 +92,7 @@ func GetUserListPagination(c *gin.Context) {
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	userList, err := service.GetUserListPagination(upi)
+	userList, err := service.UserServiceApp.GetUserListPagination(upi)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取用户分页列表出错:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -97,14 +101,14 @@ func GetUserListPagination(c *gin.Context) {
 	utils.SuccessWithDetailed(userList, "获取成功", c)
 }
 
-func GetUserInfoFormById(c *gin.Context) {
+func (a *SysUserApi) GetUserInfoFormById(c *gin.Context) {
 	userId, err := getUserIdFromParam(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetUserInfoFormById(userId)
+	res, err := service.UserServiceApp.GetUserInfoFormById(userId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
@@ -113,7 +117,7 @@ func GetUserInfoFormById(c *gin.Context) {
 	utils.SuccessWithDetailed(res, "获取成功", c)
 }
 
-func ResetUserPassword(c *gin.Context) {
+func (a *SysUserApi) ResetUserPassword(c *gin.Context) {
 	userId, err := getUserIdFromParam(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
@@ -126,7 +130,7 @@ func ResetUserPassword(c *gin.Context) {
 		utils.FailWithMessage("失败", c)
 		return
 	}
-	err = service.ResetUserPassword(userId, password)
+	err = service.UserServiceApp.ResetUserPassword(userId, password)
 	if err != nil {
 		global.OPS_LOGGER.Error("重置密码异常", zap.Error(err))
 		utils.FailWithMessage("失败", c)
@@ -135,7 +139,7 @@ func ResetUserPassword(c *gin.Context) {
 	utils.SuccessWithMessage("成功", c)
 }
 
-func UpdateUserInfo(c *gin.Context) {
+func (a *SysUserApi) UpdateUserInfo(c *gin.Context) {
 	var ui request.UserInfo
 	err := c.ShouldBindJSON(&ui)
 	if err != nil {
@@ -149,7 +153,7 @@ func UpdateUserInfo(c *gin.Context) {
 		utils.FailWithMessage("失败", c)
 		return
 	}
-	err = service.UpdateUserInfo(userId, ui)
+	err = service.UserServiceApp.UpdateUserInfo(userId, ui)
 	if err != nil {
 		global.OPS_LOGGER.Error("更新用户信息失败", zap.Error(err))
 		utils.FailWithMessage("失败", c)
@@ -158,14 +162,14 @@ func UpdateUserInfo(c *gin.Context) {
 	utils.SuccessWithMessage("成功", c)
 }
 
-func DeleteUser(c *gin.Context) {
+func (a *SysUserApi) DeleteUser(c *gin.Context) {
 	userId, err := getUserIdFromParam(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取userId失败:", zap.Error(err))
 		utils.FailWithMessage("失败", c)
 		return
 	}
-	err = service.DeleteUserById(userId)
+	err = service.UserServiceApp.DeleteUserById(userId)
 	if err != nil {
 		global.OPS_LOGGER.Error("删除用户失败", zap.Error(err))
 		utils.FailWithMessage("失败", c)
@@ -174,14 +178,14 @@ func DeleteUser(c *gin.Context) {
 	utils.SuccessWithMessage("成功", c)
 }
 
-func GetUserProfile(c *gin.Context) {
+func (a *SysUserApi) GetUserProfile(c *gin.Context) {
 	userId, err := utils.GetUserID(c)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)
 		return
 	}
-	res, err := service.GetUserInfoFormById(userId)
+	res, err := service.UserServiceApp.GetUserInfoFormById(userId)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
 		utils.FailWithMessage("获取失败", c)

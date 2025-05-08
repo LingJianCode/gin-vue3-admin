@@ -11,7 +11,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateRole(r models.SysRole) error {
+var RoleServiceApp = new(SysRoleService)
+
+type SysRoleService struct{}
+
+func (a *SysRoleService) CreateRole(r models.SysRole) error {
 	// 这里感觉写的有问题，应该所有错误都返回
 	if !errors.Is(global.OPS_DB.Where("code = ?", r.Code).First(&models.SysRole{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("角色已存在")
@@ -19,7 +23,7 @@ func CreateRole(r models.SysRole) error {
 	return global.OPS_DB.Create(&r).Error
 }
 
-func GetRoleOptions() ([]response.RoleOption, error) {
+func (a *SysRoleService) GetRoleOptions() ([]response.RoleOption, error) {
 	var roleList []models.SysRole
 	err := global.OPS_DB.Order("sort").Find(&roleList).Error
 	if err != nil {
@@ -35,7 +39,7 @@ func GetRoleOptions() ([]response.RoleOption, error) {
 	return roleOptions, nil
 }
 
-func GetRolePagination(rpi request.RolePaginationInfo) (rp response.RolePaginationRes, err error) {
+func (a *SysRoleService) GetRolePagination(rpi request.RolePaginationInfo) (rp response.RolePaginationRes, err error) {
 	db := global.OPS_DB.Model(&models.SysRole{})
 	limit := rpi.PageSize
 	offset := rpi.PageSize * (rpi.PageNum - 1)
@@ -50,12 +54,12 @@ func GetRolePagination(rpi request.RolePaginationInfo) (rp response.RolePaginati
 	err = db.Order("sort").Limit(limit).Offset(offset).Find(&rp.List).Error
 	return
 }
-func GetRoleForm(id uint) (r models.SysRole, err error) {
+func (a *SysRoleService) GetRoleForm(id uint) (r models.SysRole, err error) {
 	err = global.OPS_DB.First(&r, id).Error
 	return
 }
 
-func UpdateRole(id uint, r models.SysRole) error {
+func (a *SysRoleService) UpdateRole(id uint, r models.SysRole) error {
 	var or models.SysRole
 	if errors.Is(global.OPS_DB.First(&or, id).Error, gorm.ErrRecordNotFound) {
 		return errors.New("角色不存在")
@@ -68,7 +72,7 @@ func UpdateRole(id uint, r models.SysRole) error {
 	return global.OPS_DB.Save(&or).Error
 }
 
-func GetRoleMenus(roleId uint) ([]uint, error) {
+func (a *SysRoleService) GetRoleMenus(roleId uint) ([]uint, error) {
 	var role models.SysRole
 	if errors.Is(global.OPS_DB.Order("sort").Preload("Menus").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
 		return nil, errors.New("角色不存在")
@@ -88,7 +92,7 @@ func GetRoleMenus(roleId uint) ([]uint, error) {
 //	@return error
 //	@author lingjian
 //	@date 2025-04-30 11:18:44
-func AssignMenuToRole(roleId uint, menuIds []uint) error {
+func (a *SysRoleService) AssignMenuToRole(roleId uint, menuIds []uint) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var role models.SysRole
 		if errors.Is(tx.Order("sort").Preload("Menus").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
@@ -109,7 +113,7 @@ func AssignMenuToRole(roleId uint, menuIds []uint) error {
 	})
 }
 
-func GetRoleApis(roleId uint) ([]uint, error) {
+func (a *SysRoleService) GetRoleApis(roleId uint) ([]uint, error) {
 	var role models.SysRole
 	if errors.Is(global.OPS_DB.Order("sort").Preload("Apis").First(&role, roleId).Error, gorm.ErrRecordNotFound) {
 		return nil, errors.New("角色不存在")
@@ -129,7 +133,7 @@ func GetRoleApis(roleId uint) ([]uint, error) {
 //	@return error
 //	@author lingjian
 //	@date 2025-04-30 11:18:34
-func AssignApiToRole(roleId uint, apiIds []uint) error {
+func (a *SysRoleService) AssignApiToRole(roleId uint, apiIds []uint) error {
 	return global.OPS_DB.Transaction(func(tx *gorm.DB) error {
 		var role models.SysRole
 		if errors.Is(tx.Order("sort").Preload("Apis").First(&role, roleId).Error, gorm.ErrRecordNotFound) {

@@ -13,9 +13,13 @@ import (
 	"go.uber.org/zap"
 )
 
+var AuthApiApp = new(SysAuthApi)
+
+type SysAuthApi struct{}
+
 var store = base64Captcha.DefaultMemStore
 
-func Captcha(c *gin.Context) {
+func (a *SysAuthApi) Captcha(c *gin.Context) {
 	imgHeight, imgWidth, keyLong := 60, 240, 4
 	driver := base64Captcha.NewDriverDigit(imgHeight, imgWidth, keyLong, 0.7, 80)
 	cp := base64Captcha.NewCaptcha(driver, store)
@@ -29,7 +33,7 @@ func Captcha(c *gin.Context) {
 	utils.SuccessWithData(response.Captcha{CaptchaKey: captchaKey, CaptchaBase64: captchaBase64}, c)
 }
 
-func Login(c *gin.Context) {
+func (a *SysAuthApi) Login(c *gin.Context) {
 	var l request.Login
 	err := c.ShouldBind(&l)
 	if err != nil {
@@ -39,19 +43,19 @@ func Login(c *gin.Context) {
 	}
 	if gin.Mode() == gin.DebugMode || l.CaptchaKey != "" && l.CaptchaCode != "" && store.Verify(l.CaptchaKey, l.CaptchaCode, true) {
 		u := &models.SysUser{Username: l.Username, Password: l.Password}
-		user, err := service.Login(u)
+		user, err := service.AuthServiceApp.Login(u)
 		if err != nil {
 			global.OPS_LOGGER.Error("用户名不存在或者密码错误!", zap.Error(err))
 			utils.FailWithMessage("用户名不存在或者密码错误", c)
 			return
 		}
-		TokenNext(c, *user)
+		tokenNext(c, *user)
 		return
 	}
 	utils.FailWithMessage("验证码错误", c)
 }
 
-func TokenNext(c *gin.Context, user models.SysUser) {
+func tokenNext(c *gin.Context, user models.SysUser) {
 	token, claims, err := utils.GenerateTokenUsingHs256(&user)
 	if err != nil {
 		global.OPS_LOGGER.Error("获取token失败!", zap.Error(err))
@@ -65,6 +69,6 @@ func TokenNext(c *gin.Context, user models.SysUser) {
 	}, "登录成功", c)
 }
 
-func Logout(c *gin.Context) {
+func (a *SysAuthApi) Logout(c *gin.Context) {
 	utils.Success(c)
 }
