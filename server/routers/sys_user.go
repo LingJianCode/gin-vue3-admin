@@ -16,5 +16,6 @@ func InitUserRoutes(router *gin.RouterGroup) {
 		userRouter.PUT("/:userId/password/reset", v1.ResetUserPassword)
 		userRouter.PUT("/:userId", v1.UpdateUserInfo)
 		userRouter.DELETE("/:userId", v1.DeleteUser)
+		userRouter.GET("/profile", v1.GetUserProfile)
 	}
 }

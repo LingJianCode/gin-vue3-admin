@@ -173,3 +173,19 @@ func DeleteUser(c *gin.Context) {
 	}
 	utils.SuccessWithMessage("成功", c)
 }
+
+func GetUserProfile(c *gin.Context) {
+	userId, err := utils.GetUserID(c)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取失败!", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	res, err := service.GetUserInfoFormById(userId)
+	if err != nil {
+		global.OPS_LOGGER.Error("获取用户信息失败:", zap.Error(err))
+		utils.FailWithMessage("获取失败", c)
+		return
+	}
+	utils.SuccessWithDetailed(res, "获取成功", c)
+}
