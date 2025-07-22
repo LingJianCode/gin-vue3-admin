@@ -1,6 +1,6 @@
 # 项目介绍
 
-基于 GIN + GORM + Casbin 的后台框架。当时想使用[vue3-element-admin-js](https://gitee.com/youlaiorg/vue3-element-admin-js)前端模板，但是没找到go后端，故自己参考接口文档实现go后端。在开发中由于URI冲突问题，对字典项路由地址进行了修改。配套前端地址[my-ops-vue](https://gitee.com/LingJianCode/my-ops-vue)。目前仅支持PostgreSQL数据库。
+基于 GIN + GORM + Casbin 的后台框架。当时想使用[vue3-element-admin-js](https://gitee.com/youlaiorg/vue3-element-admin-js)前端模板，但是没找到go后端，故自己参考接口文档实现go后端。在开发中由于URI冲突问题，对字典项路由地址进行了修改。配套前端地址[gin-vue3-admin-web](https://gitee.com/LingJianCode/gin-vue3-admin-web)。目前仅支持PostgreSQL数据库。
 
 # 配套前端页面展示
 
