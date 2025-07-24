@@ -1,17 +1,17 @@
 package main
 
 import (
-	"my-ops-admin/initalize"
+	"my-ops-admin/initialize"
 	mycasbin "my-ops-admin/pkg/my_casbin"
 )
 
 func main() {
-	initalize.InitViper()
-	initalize.InitZap()
-	initalize.InitDB()
-	initalize.AutoMigrate()
-	initalize.InitValidator()
+	initialize.InitViper()
+	initialize.InitZap()
+	initialize.InitDB()
+	initialize.AutoMigrate()
+	initialize.InitValidator()
 	mycasbin.Casbin.InitCasbin()
-	router := initalize.Routers()
+	router := initialize.Routers()
 	router.Run("localhost:8080")
 }

@@ -1,4 +1,4 @@
-package initalize
+package initialize
 
 import (
 	"my-ops-admin/middleware"

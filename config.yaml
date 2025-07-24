@@ -16,7 +16,7 @@ postgresql:
 zap:
   level: debug
   format: console
-  prefix: "my-ops-admin"
+  prefix: "gin-vue3-admin"
   director: logs
   show-line: true
   stacktrace-key: stacktrace
