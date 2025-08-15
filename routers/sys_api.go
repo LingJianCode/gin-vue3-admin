@@ -7,8 +7,8 @@ import (
 )
 
 func InitApiRoutes(private *gin.RouterGroup) {
-	privateAuthRouter := private.Group("/apis")
+	apiRouter := private.Group("/apis")
 	{
-		privateAuthRouter.GET("/options", v1.ApiApiApp.GetApiOptionsList)
+		apiRouter.GET("/options", v1.ApiApiApp.GetApiOptionsList)
 	}
 }
