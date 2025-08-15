@@ -27,6 +27,6 @@ func (a *SysLogService) GetDictPagination(lpi request.LogPaginationInfo) (logPag
 	if err != nil {
 		return
 	}
-	err = db.Limit(limit).Offset(offset).Find(&logPageRes.List).Error
+	err = db.Limit(limit).Offset(offset).Preload("User").Find(&logPageRes.List).Error
 	return
 }
