@@ -3,7 +3,7 @@ package models
 import "my-ops-admin/global"
 
 type SysDictItem struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	// 字典编码
 	DictCode string `gorm:"comment:字典编码" json:"dictCode,omitempty"`
 	// 字典项标签

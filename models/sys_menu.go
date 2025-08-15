@@ -13,7 +13,7 @@ const (
 )
 
 type SysMenu struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	AlwaysShow int64  `gorm:"comment:【目录】只有一个子路由是否始终显示" json:"alwaysShow"`
 	Component  string `gorm:"comment:组件路径(vue页面完整路径，省略.vue后缀)" json:"component"`
 	Icon       string `gorm:"comment:菜单图标" json:"icon"`
@@ -35,7 +35,7 @@ type SysMenu struct {
 
 // Param，键值对
 type SysMenuParameter struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	SysMenuID uint   `gorm:"comment:菜单ID" json:"-"`
 	Key       string `gorm:"comment:参数key" json:"key"`
 	Value     string `gorm:"comment:参数value" json:"value"`

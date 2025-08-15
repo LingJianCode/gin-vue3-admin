@@ -105,7 +105,7 @@ func (a *SysRoleService) AssignMenuToRole(roleId uint, menuIds []uint) error {
 		var menus []models.SysMenu
 		for _, v := range menuIds {
 			menus = append(menus, models.SysMenu{
-				OPS_MODEL: global.OPS_MODEL{ID: v},
+				BASE_MODEL: global.BASE_MODEL{ID: v},
 			})
 		}
 		role.Menus = menus
@@ -154,7 +154,7 @@ func (a *SysRoleService) AssignApiToRole(roleId uint, apiIds []uint) error {
 		for _, v := range apiIds {
 			if v != 0 {
 				apis = append(apis, models.SysApi{
-					OPS_MODEL: global.OPS_MODEL{ID: v},
+					BASE_MODEL: global.BASE_MODEL{ID: v},
 				})
 			}
 		}

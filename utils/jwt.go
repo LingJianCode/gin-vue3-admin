@@ -48,7 +48,7 @@ func GenerateTokenUsingHs256(user *models.SysUser) (token string, claims MyCusto
 		Username: user.Username,
 		Nickname: user.Nickname,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "MY_OPS_ADMIN",                                        // 签发者
+			Issuer:    "GIN_VUE3_ADMIN",                                      // 签发者
 			Subject:   user.Username,                                         // 签发对象
 			Audience:  jwt.ClaimStrings{"webbrowser"},                        // 签发受众
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),         // 过期时间
@@ -114,5 +114,14 @@ func GetUserRoleIds(c *gin.Context) ([]uint, error) {
 	} else {
 		waitUse := claims.(*MyCustomClaims)
 		return waitUse.RoleIds, nil
+	}
+}
+
+func GetClaims(c *gin.Context) (*MyCustomClaims, error) {
+	if claims, exists := c.Get("claims"); !exists {
+		return nil, errors.New("从上下文获取用户信息失败")
+	} else {
+		waitUse := claims.(*MyCustomClaims)
+		return waitUse, nil
 	}
 }

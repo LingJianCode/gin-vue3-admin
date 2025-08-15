@@ -3,7 +3,7 @@ package models
 import "my-ops-admin/global"
 
 type SysApi struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	Name   string    `gorm:"comment:api名称" json:"name"`
 	Uri    string    `gorm:"comment:api路径" json:"uri"`
 	Method string    `gorm:"comment:api方法:GET,POST,PUT,DELETE,PATCH" json:"method"`

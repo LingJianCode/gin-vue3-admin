@@ -42,6 +42,7 @@ func AutoMigrate() {
 		models.SysMenuParameter{},
 		models.SysDict{},
 		models.SysDictItem{},
+		models.SysLog{},
 	)
 	if err != nil {
 		global.OPS_LOGGER.Error("AutoMigrate table failed", zap.Error(err))

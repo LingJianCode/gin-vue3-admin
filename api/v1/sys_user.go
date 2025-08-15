@@ -40,7 +40,7 @@ func (a *SysUserApi) CreateUser(c *gin.Context) {
 
 	var roles []models.SysRole
 	for _, v := range cu.RoleIDS {
-		role := models.SysRole{OPS_MODEL: global.OPS_MODEL{ID: v}}
+		role := models.SysRole{BASE_MODEL: global.BASE_MODEL{ID: v}}
 		roles = append(roles, role)
 	}
 	// user := models.SysUser{}：会在栈上分配内存，当该变量超出作用域时，系统会自动回收内存。

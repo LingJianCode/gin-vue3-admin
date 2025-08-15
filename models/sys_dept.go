@@ -5,7 +5,7 @@ import (
 )
 
 type SysDept struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	Name     string `gorm:"comment:部门名称" json:"name"`
 	Code     string `gorm:"uniqueIndex;comment:部门编号" json:"code"`
 	ParentID uint   `gorm:"comment:父节点id"   json:"parentId"`

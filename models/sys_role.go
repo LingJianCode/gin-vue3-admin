@@ -3,7 +3,7 @@ package models
 import "my-ops-admin/global"
 
 type SysRole struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	Code      string    `gorm:"uniqueIndex;comment:角色编码" json:"code"`
 	DataScope int64     `gorm:"comment:数据权限" json:"dataScope"`
 	Name      string    `gorm:"comment:角色名称" json:"name"`

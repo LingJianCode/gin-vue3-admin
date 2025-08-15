@@ -237,7 +237,7 @@ func (a *SysUserService) UpdateUserInfo(id uint, ui request.UserInfo) error {
 		user.Roles = []models.SysRole{}
 		// 重新关联
 		for _, v := range ui.RoleIDS {
-			user.Roles = append(user.Roles, models.SysRole{OPS_MODEL: global.OPS_MODEL{ID: v}})
+			user.Roles = append(user.Roles, models.SysRole{BASE_MODEL: global.BASE_MODEL{ID: v}})
 		}
 		// 更新
 		err = tx.Save(&user).Error

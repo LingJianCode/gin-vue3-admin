@@ -6,7 +6,7 @@ import "my-ops-admin/global"
 //  @author lingjian
 //  @date 2025-04-24 17:56:22
 type SysUser struct {
-	global.OPS_MODEL
+	global.BASE_MODEL
 	Username string    `gorm:"uniqueIndex;comment:用户登录名"`
 	Nickname string    `gorm:"default:系统用户;comment:用户昵称"`
 	Gender   int8      `gorm:"comment:性别"`
